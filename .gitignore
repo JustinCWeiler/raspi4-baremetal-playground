@@ -1,6 +1,9 @@
 # Build tools
 aarch64-none-elf
 
+# Dev tools
+*/.clangd
+
 # Prerequisites
 *.d
 
@@ -10,6 +13,7 @@ aarch64-none-elf
 *.obj
 *.elf
 *.bin
+*.img
 
 # Linker output
 *.ilk
