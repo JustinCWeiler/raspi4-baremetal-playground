@@ -4,7 +4,7 @@ PREFIX = aarch64-none-elf
 BIN = ../$(PREFIX)/bin
 
 CC = $(BIN)/$(PREFIX)-gcc
-CFLAGS = -ffreestanding -mcpu=cortex-a72 -Ofast -Wall -Werror
+CFLAGS = -ffreestanding -mcpu=cortex-a72 -Og -Wall -Werror
 LD = $(BIN)/$(PREFIX)-ld
 LDFLAGS = -T link.ld
 OCP = $(BIN)/$(PREFIX)-objcopy
