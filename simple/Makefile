@@ -1,25 +1,35 @@
-OBJS = $(patsubst %.S, %.o, $(patsubst %.c, %.o, $(wildcard *.[cS])))
+BIN = bin
+OUT = out
+SRC = src
+INC = include
 
 PREFIX = aarch64-none-elf
-BIN = ../$(PREFIX)/bin
+CCBIN = ../$(PREFIX)/bin
 
-CC = $(BIN)/$(PREFIX)-gcc
+OBJS = $(patsubst $(SRC)/%.S, $(BIN)/%.o, $(patsubst $(SRC)/%.c, $(BIN)/%.o, $(wildcard $(SRC)/*.[cS])))
+
+CC = $(CCBIN)/$(PREFIX)-gcc
 CFLAGS = -ffreestanding -mcpu=cortex-a72 -Og -Wall -Werror
-LD = $(BIN)/$(PREFIX)-ld
-LDFLAGS = -T link.ld
-OCP = $(BIN)/$(PREFIX)-objcopy
+LD = $(CCBIN)/$(PREFIX)-ld
+LDFLAGS = -T $(SRC)/link.ld
+OCP = $(CCBIN)/$(PREFIX)-objcopy
 
 all: kernel.img
 clean:
-	rm -rf *.o *.img *.bin *.elf
+	rm -rf $(BIN) $(OUT)
 
-%.o: %.c
+$(BIN):
+	mkdir $(BIN)
+$(OUT):
+	mkdir $(OUT)
+
+$(BIN)/%.o: $(SRC)/%.c $(BIN)
 	$(CC) $(CFLAGS) -c $< -o $@
-%.o: %.S
+$(BIN)/%.o: $(SRC)/%.S $(BIN)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-kernel.img: $(OBJS)
-	$(LD) $(LDFLAGS) $^ -o kernel.elf
-	$(OCP) -Obinary kernel.elf kernel.img
+kernel.img: $(OBJS) $(OUT)
+	$(LD) $(LDFLAGS) $(filter-out $(OUT), $^) -o $(OUT)/kernel.elf
+	$(OCP) -Obinary $(OUT)/kernel.elf $(OUT)/kernel.img
 
 .PHONY: clean
