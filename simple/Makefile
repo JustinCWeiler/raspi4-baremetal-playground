@@ -9,7 +9,7 @@ CCBIN = ../$(PREFIX)/bin
 OBJS = $(patsubst $(SRC)/%.S, $(BIN)/%.o, $(patsubst $(SRC)/%.c, $(BIN)/%.o, $(wildcard $(SRC)/*.[cS])))
 
 CC = $(CCBIN)/$(PREFIX)-gcc
-CFLAGS = -ffreestanding -mcpu=cortex-a72 -Og -Wall -Werror
+CFLAGS = -ffreestanding -mcpu=cortex-a72 -Og -Wall -Werror -I$(INC)
 LD = $(CCBIN)/$(PREFIX)-ld
 LDFLAGS = -T $(SRC)/link.ld
 OCP = $(CCBIN)/$(PREFIX)-objcopy
