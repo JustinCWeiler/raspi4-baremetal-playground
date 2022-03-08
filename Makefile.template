@@ -40,3 +40,4 @@ $(OUT)/kernel.img: $(OUT)/kernel.elf | $(OUT)
 	$(OCP) -Obinary $< $@
 
 .PHONY: clean all
+.SILENT: $(BIN) $(OUT)
