@@ -1,0 +1,40 @@
+BIN = bin
+OUT = out
+SRC = src
+INC = include
+
+PREFIX = aarch64-none-elf
+CCBIN = ../$(PREFIX)/bin
+
+OBJS := $(wildcard $(SRC)/*.[cS])
+OBJS := $(patsubst $(SRC)/%.c, $(BIN)/%.o, $(OBJS))
+OBJS := $(patsubst $(SRC)/%.S, $(BIN)/%.o, $(OBJS))
+
+CC = $(CCBIN)/$(PREFIX)-gcc
+CFLAGS = -ffreestanding -mcpu=cortex-a72 -Og -Wall -Werror -I$(INC)
+ASFLAGS =
+LD = $(CCBIN)/$(PREFIX)-ld
+LDFLAGS = -T $(SRC)/link.ld
+OCP = $(CCBIN)/$(PREFIX)-objcopy
+
+all: $(OUT)/kernel.img
+clean:
+	rm -rf $(BIN) $(OUT)
+
+$(BIN):
+	mkdir $(BIN)
+$(OUT):
+	mkdir $(OUT)
+
+$(BIN)/%.o: $(SRC)/%.c | $(BIN)
+	$(CC) $(CFLAGS) -c $< -o $@
+$(BIN)/%.o: $(SRC)/%.S | $(BIN)
+	$(CC) $(ASFLAGS) -c $< -o $@
+
+$(OUT)/kernel.elf: $(OBJS) | $(OUT)
+	$(LD) $(LDFLAGS) $(filter-out $(OUT), $^) -o $@
+
+$(OUT)/kernel.img: $(OUT)/kernel.elf | $(OUT)
+	$(OCP) -Obinary $< $@
+
+.PHONY: clean all
