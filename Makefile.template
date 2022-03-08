@@ -3,6 +3,8 @@ OUT = out
 SRC = src
 INC = include
 
+LDSCRIPT=$(SRC)/link.ld
+
 PREFIX = aarch64-none-elf
 CCBIN = ../$(PREFIX)/bin
 
@@ -14,7 +16,7 @@ CC = $(CCBIN)/$(PREFIX)-gcc
 CFLAGS = -ffreestanding -mcpu=cortex-a72 -Og -Wall -Werror -I$(INC)
 ASFLAGS = -Wall -Werror -I$(INC)
 LD = $(CCBIN)/$(PREFIX)-ld
-LDFLAGS = -T $(SRC)/link.ld
+LDFLAGS =
 OCP = $(CCBIN)/$(PREFIX)-objcopy
 
 all: $(OUT)/kernel.img
@@ -31,8 +33,8 @@ $(BIN)/%.o: $(SRC)/%.c | $(BIN)
 $(BIN)/%.o: $(SRC)/%.S | $(BIN)
 	$(CC) $(ASFLAGS) -c $< -o $@
 
-$(OUT)/kernel.elf: $(OBJS) | $(OUT)
-	$(LD) $(LDFLAGS) $(filter-out $(OUT), $^) -o $@
+$(OUT)/kernel.elf: $(LDSCRIPT) $(OBJS) | $(OUT)
+	$(LD) $(LDFLAGS) -T $^ -o $@
 
 $(OUT)/kernel.img: $(OUT)/kernel.elf | $(OUT)
 	$(OCP) -Obinary $< $@
