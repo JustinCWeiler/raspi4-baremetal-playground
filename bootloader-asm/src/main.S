@@ -22,10 +22,10 @@ loop:
 
 	b loop
 
+	POP(x30, xzr)
 	ret
 
 wait:
 	subs x0, x0, #1
 	bgt wait
-	POP(x30, xzr)
 	ret
