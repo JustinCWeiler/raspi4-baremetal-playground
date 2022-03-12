@@ -3,6 +3,7 @@
 #include "asm-defs.S"
 
 MK_FN(main)
+	PUSH(x30, xzr)
 	mov x0, #21
 	bl gpio_set_output
 
@@ -26,4 +27,5 @@ loop:
 wait:
 	subs x0, x0, #1
 	bgt wait
+	POP(x30, xzr)
 	ret
