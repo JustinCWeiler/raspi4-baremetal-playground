@@ -11,7 +11,9 @@ GPIO_FSEL3: .word 0xFE20000C
 */
 
 GPIO_SET0:  .word 0xFE20001C
+GPIO_SET1:  .word 0xFE200020
 GPIO_CLR0:  .word 0xFE200028
+GPIO_CLR1:  .word 0xFE20002C
 
 GPIO_LEV0:  .word 0xFE200034
 
@@ -103,4 +105,20 @@ MK_FN(gpio_set_off)
 // assumes pin already in input mode
 MK_FN(gpio_read)
 	mov w0, wzr
+	ret
+
+// void gpio_act_on(void)
+// turns on the act LED
+MK_FN(gpio_act_on)
+	ldr w0, GPIO_SET1
+	mov w1, #1<<10
+	str w1, [x0]
+	ret
+
+// void gpio_act_off(void)
+// turns off the act LED
+MK_FN(gpio_act_off)
+	ldr w0, GPIO_CLR1
+	mov w1, #1<<10
+	str w1, [x0]
 	ret

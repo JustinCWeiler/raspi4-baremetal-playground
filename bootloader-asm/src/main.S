@@ -4,28 +4,17 @@
 
 MK_FN(main)
 	PUSH(x30, xzr)
-	mov x0, #21
-	bl gpio_set_output
 
 loop:
-	mov x0, #21
-	bl gpio_set_on
+	bl gpio_act_on
+	mov x0, #1
+	bl timer_wait
 
-	mov x0, #0x100000
-	bl wait
-
-	mov x0, #21
-	bl gpio_set_off
-
-	mov x0, #0x100000
-	bl wait
-
+	bl gpio_act_off
+	mov x0, #1
+	bl timer_wait
+	
 	b loop
 
 	POP(x30, xzr)
-	ret
-
-wait:
-	subs x0, x0, #1
-	bgt wait
 	ret
