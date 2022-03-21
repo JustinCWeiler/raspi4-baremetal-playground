@@ -2,15 +2,31 @@ SECTIONS {
 	.text 0x80000 : {
 		*(.text.boot)
 		*(.text)
-		*(.text.lib)
-		*(.text*) /* catch all sections we missed */
 	}
 
 	.data : {
 		*(.data)
 	}
 
+	.text : {
+		*(.text.lib)
+	}
+
+	.data : {
+		*(.data.lib)
+	}
+
+	.text : {
+		*(.text*)
+	}
+
+	.data : {
+		*(.data*)
+	}
+
+	/* not needed probably?
 	.bss : {
 		*(.bss)
 	}
+	*/
 }

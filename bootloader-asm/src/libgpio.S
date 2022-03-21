@@ -1,6 +1,4 @@
-.section ".text.lib"
-
-#include "asm-defs.S"
+.section ".data.lib"
 
 GPIO_FSEL0: .word 0xFE200000
 /*
@@ -16,6 +14,10 @@ GPIO_CLR0:  .word 0xFE200028
 GPIO_CLR1:  .word 0xFE20002C
 
 GPIO_LEV0:  .word 0xFE200034
+
+.section ".text.lib"
+
+#include "asm-defs.S"
 
 // all these functions assume inputs are correct
 // any error that happens as a result of incorrect input parameters are all the user's fault etc etc

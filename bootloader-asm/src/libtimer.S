@@ -1,12 +1,14 @@
-.section ".text.lib"
-
-#include "asm-defs.S"
+.section ".data.lib"
 
 TIMER_CLO: .word 0xFE003004
 /*
 unneeded
 TIMER_CHI: .word 0xFE003008
 */
+
+.section ".text.lib"
+
+#include "asm-defs.S"
 
 // u32 timer_get_us(void)
 // get the current timer count (in us)
