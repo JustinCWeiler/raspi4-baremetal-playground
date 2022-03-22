@@ -126,9 +126,9 @@ MK_FN(gpio_read)
 MK_FN(gpio_act_on)
 	MB_WR
 
-	ldr w0, GPIO_SET1
-	mov w1, #1<<10
-	str w1, [x0]
+	ldr w1, GPIO_SET1
+	mov w0, #1<<10
+	str w0, [x1]
 	ret
 
 // void gpio_act_off(void)
@@ -136,7 +136,7 @@ MK_FN(gpio_act_on)
 MK_FN(gpio_act_off)
 	MB_WR
 
-	ldr w0, GPIO_CLR1
-	mov w1, #1<<10
-	str w1, [x0]
+	ldr w1, GPIO_CLR1
+	mov w0, #1<<10
+	str w0, [x1]
 	ret
