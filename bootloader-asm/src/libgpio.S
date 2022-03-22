@@ -112,9 +112,11 @@ MK_FN(gpio_set_off)
 // u32 gpio_read(u32 pin)
 // return the value of pin
 // assumes pin already in input mode
-// TODO
 MK_FN(gpio_read)
-	mov w0, wzr
+	ldr w1, GPIO_LEV0
+	ldr w1, [x1]
+	lsr w0, w1, w0
+	and w0, w0, #1
 
 	MB_RD
 	ret
