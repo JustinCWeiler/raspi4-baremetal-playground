@@ -25,6 +25,8 @@ GPIO_LEV0:  .word 0xFE200034
 // void gpio_set_func(u32 pin, u32 func)
 // set pin to func as specified on p67 of BCM2711
 MK_FN(gpio_set_func)
+	MB_WR
+
 	mov w2, wzr
 gsf.loop:
 	subs w0, w0, #10
@@ -58,6 +60,7 @@ gsf.loop:
 	ldr w0, GPIO_FSEL0
 	str w4, [x0, x2]
 
+	MB_RD
 	ret
 
 // void gpio_set_output(u32 pin)
@@ -86,6 +89,8 @@ MK_FN(gpio_set_input)
 // set pin on
 // assumes pin already in output mode
 MK_FN(gpio_set_on)
+	MB_WR
+
 	mov w1, #1
 	lsl w0, w1, w0
 	ldr w1, GPIO_SET0
@@ -96,6 +101,8 @@ MK_FN(gpio_set_on)
 // set pin off
 // assumes pin already in output mode
 MK_FN(gpio_set_off)
+	MB_WR
+
 	mov w1, #1
 	lsl w0, w1, w0
 	ldr w1, GPIO_CLR0
@@ -105,13 +112,18 @@ MK_FN(gpio_set_off)
 // u32 gpio_read(u32 pin)
 // return the value of pin
 // assumes pin already in input mode
+// TODO
 MK_FN(gpio_read)
 	mov w0, wzr
+
+	MB_RD
 	ret
 
 // void gpio_act_on(void)
 // turns on the act LED
 MK_FN(gpio_act_on)
+	MB_WR
+
 	ldr w0, GPIO_SET1
 	mov w1, #1<<10
 	str w1, [x0]
@@ -120,6 +132,8 @@ MK_FN(gpio_act_on)
 // void gpio_act_off(void)
 // turns off the act LED
 MK_FN(gpio_act_off)
+	MB_WR
+
 	ldr w0, GPIO_CLR1
 	mov w1, #1<<10
 	str w1, [x0]

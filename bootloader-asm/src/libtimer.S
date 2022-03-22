@@ -15,6 +15,8 @@ TIMER_CHI: .word 0xFE003008
 MK_FN(timer_get_us)
 	ldr w0, TIMER_CLO
 	ldr w0, [x0]
+
+	MB_RD
 	ret
 
 // void timer_wait_us(u32 us)
@@ -27,6 +29,8 @@ twu.loop:
 	sub w2, w2, w1
 	cmp w0, w2
 	b.hi twu.loop
+
+	MB_RD
 	ret
 
 // void timer_wait_ms(u32 ms)
