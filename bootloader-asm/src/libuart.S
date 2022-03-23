@@ -111,3 +111,24 @@ ur.loop:
 
 	MB_RD
 	ret
+
+// bool uart_can_write(void)
+// returns whether or not we have space in tx FIFO
+MK_FN(uart_can_write)
+	ldr w1, AUX_MU_STAT
+	ldr w0, [x1]
+	lsr w0, #1
+	and w0, #1
+
+	MB_RD
+	ret
+
+// bool uart_can_read(void)
+// returns whether or not we have data in rx FIFO
+MK_FN(uart_can_read)
+	ldr w1, AUX_MU_STAT
+	ldr w0, [x1]
+	and w0, #1
+
+	MB_RD
+	ret
