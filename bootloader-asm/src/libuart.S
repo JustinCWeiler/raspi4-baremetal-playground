@@ -117,8 +117,8 @@ ur.loop:
 MK_FN(uart_can_write)
 	ldr w1, AUX_MU_STAT
 	ldr w0, [x1]
-	lsr w0, #1
-	and w0, #1
+	lsr w0, w0, #1
+	and w0, w0, #1
 
 	MB_RD
 	ret
@@ -128,7 +128,7 @@ MK_FN(uart_can_write)
 MK_FN(uart_can_read)
 	ldr w1, AUX_MU_STAT
 	ldr w0, [x1]
-	and w0, #1
+	and w0, w0, #1
 
 	MB_RD
 	ret
