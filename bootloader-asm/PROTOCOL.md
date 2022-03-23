@@ -47,6 +47,8 @@ This is a stripped down version (good enough for out purposes):
                                       the terminal.
     =======================================================
 
+Note that `put_uint` is 4 bytes sent in little-endian order.
+
 More descriptively:
 
   1. The pi will repeatedly signal it is ready to receive the program by
