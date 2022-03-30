@@ -85,8 +85,8 @@ MK_FN(uart_write)
 	// check if can write
 	ldr w1, AUX_MU_STAT
 uw.loop:
-	ldr w2, [x1]
-	tst w2, #1<<1
+	ldr w1, [x1]
+	tst w1, #1<<1
 	b.eq uw.loop
 
 	MB_RDWR
@@ -102,8 +102,8 @@ MK_FN(uart_read)
 	// check if can read
 	ldr w1, AUX_MU_STAT
 ur.loop:
-	ldr w2, [x1]
-	tst w1, #1<<0
+	ldr w0, [x1]
+	tst w0, #1<<0
 	b.eq ur.loop
 
 	ldr w1, AUX_MU_IO
