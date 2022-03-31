@@ -9,37 +9,43 @@
 #define CRC_FAIL #0xF0
 #define TIMEOUT  #0xF1
 
+#define TIMEOUT_VAL #300
+
 .section ".text"
 
 #include "asm-defs.S"
 
+// debug defines
 #define BLINKYT(n, t) .rept(n); bl gpio_act_on; mov w0, t; bl timer_wait_ms; bl gpio_act_off; mov w0, t; bl timer_wait_ms; .endr
 #define BLINKY(n) BLINKYT(n, #100)
 
 MK_FN(main)
 	PUSH(x30, xzr)
 
-	// two blink
+	// two blink to signify proram start
 	BLINKY(2)
+
+	// send_recv GET_INFO
+
+	// receive nbytes
+
+	// receive crc32
+
+	// send crc32
+
+	// send GET_CODE
+
+	// receive PUT_CODE
+
+	// receive code bytes
+
+	// send SUCCESS
 
 	// start
 	bl uart_init
-	
-	mov w0, #0x22
-	bl uart_write
-	mov w0, #0x22
-	bl uart_write
-	mov w0, #0x11
-	bl uart_write
-	mov w0, #0x11
-	mov w1, #1000
-	bl send_recv
 
-	b fast_blinky
-
-	POP(x30, xzr)
-	ret
-
+	// NORETURN
+// debug functions
 slow_blinky:
 	BLINKYT(1, #1000)
 	b slow_blinky
