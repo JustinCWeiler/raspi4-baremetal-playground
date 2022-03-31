@@ -11,7 +11,7 @@
 
 #define TIMEOUT_VAL #300
 
-.section ".text"
+.section ".text.bootmain"
 
 #include "asm-defs.S"
 
@@ -19,10 +19,10 @@
 #define BLINKYT(n, t) .rept(n); bl gpio_act_on; mov w0, t; bl timer_wait_ms; bl gpio_act_off; mov w0, t; bl timer_wait_ms; .endr
 #define BLINKY(n) BLINKYT(n, #100)
 
-MK_FN(main)
+MK_FN(boot_main)
 	PUSH(x30, xzr)
 
-	// two blink to signify proram start
+	// two blink to signify program start
 	BLINKY(2)
 
 	// send_recv GET_INFO
