@@ -29,12 +29,12 @@ r.loop:
 
 	// w21 = can read?
 	cmp w21, #1
-	b.eq r.after
+	beq r.after
 
 	// w19 = timeout
 	// w0 = delta time
 	cmp w19, w0
-	b.hi r.loop
+	bhi r.loop
 
 	mov w0, #0xffff
 	b r.end

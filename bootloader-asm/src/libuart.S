@@ -87,7 +87,7 @@ MK_FN(uart_write)
 uw.loop:
 	ldr w1, [x1]
 	tst w1, #1<<1
-	b.eq uw.loop
+	beq uw.loop
 
 	MB_RDWR
 
@@ -104,7 +104,7 @@ MK_FN(uart_read)
 ur.loop:
 	ldr w0, [x1]
 	tst w0, #1<<0
-	b.eq ur.loop
+	beq ur.loop
 
 	ldr w1, AUX_MU_IO
 	ldr w0, [x1]

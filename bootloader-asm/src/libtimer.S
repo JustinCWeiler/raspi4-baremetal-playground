@@ -28,7 +28,7 @@ twu.loop:
 	ldr w2, [x3]
 	sub w2, w2, w1
 	cmp w0, w2
-	b.hi twu.loop
+	bhi twu.loop
 
 	MB_RD
 	ret

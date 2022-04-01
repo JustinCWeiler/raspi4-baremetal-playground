@@ -31,7 +31,7 @@ MK_FN(gpio_set_func)
 gsf.loop:
 	subs w0, w0, #10
 	cinc w2, w2, ge
-	b.ge gsf.loop
+	bge gsf.loop
 	add w0, w0, #10
 
 	// w0 now holds offset

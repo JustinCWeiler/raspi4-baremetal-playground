@@ -6,3 +6,6 @@
 #define MB_RDWR dsb sy
 #define MB_RD dsb ld
 #define MB_WR dsb st
+
+#define bz b.eq
+#define bnz b.ne
