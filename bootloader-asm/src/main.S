@@ -25,6 +25,35 @@ MK_FN(boot_main)
 	// two blink to signify program start
 	BLINKY(2)
 
+	bl uart_init
+
+	bl get_memory_size
+	mov w19, w0 // mem_size
+
+loop:
+	mov w0, w19
+	and w0, w0, #0xff
+	bl uart_write
+
+	mov w0, w19
+	lsr w0, w0, #8
+	and w0, w0, #0xff
+	bl uart_write
+
+	mov w0, w19
+	lsr w0, w0, #16
+	and w0, w0, #0xff
+	bl uart_write
+
+	mov w0, w19
+	lsr w0, w0, #24
+	and w0, w0, #0xff
+	bl uart_write
+
+	mov w0, #300
+	bl timer_wait_ms
+	b loop
+
 	// send_recv GET_INFO
 
 	// receive nbytes
