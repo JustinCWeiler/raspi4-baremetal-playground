@@ -82,6 +82,7 @@ MK_FN(uart_init)
 // sends single byte of data
 // blocks until can send
 MK_FN(uart_write)
+	MB_WR
 	// check if can write
 	ldr w1, AUX_MU_STAT
 uw.loop:
@@ -89,10 +90,11 @@ uw.loop:
 	tst w1, #1<<1
 	beq uw.loop
 
-	MB_RDWR
-
 	ldr w1, AUX_MU_IO
 	str w0, [x1]
+
+	MB_RD
+
 	ret
 
 // u8 uart_read(void)
