@@ -21,26 +21,26 @@ MAIL_STATUS: .word 0xFE00B880+0x18
 .balign(16)
 msg_mem_buffer:
 // u32: buffer size in bytes
-.word 8*4
+.word 8*4		// 0
 // u32: buffer request/response code: sbz on request
 //      0x80000000: request successful
 //      0x80000001: error parsing request buffer (partial response)
-.word 0
+.word 0			// 1
 // tag
 // u32: tag identifier
-.word 0x00010005
+.word 0x00010005	// 2
 // u32 response size in bytes
-.word 8
+.word 8			// 3
 // u32 request size in bytes
-.word 0
+.word 0			// 4
 // u32... value buffer
-.word 0 // base address
-.word 0 // size
+.word 0			// 5 base address
+.word 0			// 6 size
 // u32 0x00000000: end tag
-.word 0
+.word 0			// 7
 
-// void get_memory_size(void)
-MK_FN(get_memory_size)
+// void get_end_mem(void)
+MK_FN(get_end_mem)
 	MB_WR
 
 	// read status to see if we can write
@@ -74,7 +74,9 @@ gms.can_read_loop:
 	bne gms.get_reply
 
 	bfi w1, wzr, #0, #4
-	ldr w0, [x1, #6*4]
+	ldr w0, [x1, #5*4]
+	ldr w1, [x1, #6*4]
+	add w0, w1, w1
 
 	MB_RD
 
