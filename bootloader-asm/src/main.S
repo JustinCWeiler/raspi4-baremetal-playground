@@ -20,39 +20,10 @@
 #define BLINKY(n) BLINKYT(n, #100)
 
 MK_FN(boot_main)
-	PUSH(x30, xzr)
-
 	// two blink to signify program start
 	BLINKY(2)
 
-	bl uart_init
-
-	bl get_memory_size
-	mov w19, w0 // mem_size
-
-loop:
-	mov w0, w19
-	and w0, w0, #0xff
-	bl uart_write
-
-	mov w0, w19
-	lsr w0, w0, #8
-	and w0, w0, #0xff
-	bl uart_write
-
-	mov w0, w19
-	lsr w0, w0, #16
-	and w0, w0, #0xff
-	bl uart_write
-
-	mov w0, w19
-	lsr w0, w0, #24
-	and w0, w0, #0xff
-	bl uart_write
-
-	mov w0, #300
-	bl timer_wait_ms
-	b loop
+	b slow_blinky
 
 	// send_recv GET_INFO
 
@@ -69,9 +40,6 @@ loop:
 	// receive code bytes
 
 	// send SUCCESS
-
-	// start
-	bl uart_init
 
 	// NORETURN
 // debug functions

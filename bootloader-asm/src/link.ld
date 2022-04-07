@@ -33,6 +33,4 @@ SECTIONS {
 	*/
 
 	_boot_end_ = .;
-
-	_boot_size_ = (_boot_end_ - _boot_start_) >> 2;
 }
