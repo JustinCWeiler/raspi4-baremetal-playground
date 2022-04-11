@@ -7,7 +7,7 @@ _start:
 	// setup stack
 	// technically not needed here because get_end_mem
 	// never uses the stack, but still do it cuz proper
-	ldr w0, =_start
+	mov w0, #0x80000
 	mov sp, x0
 
 	// figure out end of memory

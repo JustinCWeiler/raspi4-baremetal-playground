@@ -26,11 +26,9 @@ SECTIONS {
 		*(.data*)
 	}
 
-	/* not needed probably?
 	.bss : {
 		*(.bss)
 	}
-	*/
 
 	_boot_end_ = .;
 }
