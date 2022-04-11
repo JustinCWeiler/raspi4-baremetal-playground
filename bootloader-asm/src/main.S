@@ -88,8 +88,18 @@ get_info.loop:
 	bl uart_read
 
 	// receive code bytes
+	mov w20, CODE_LOC
+	mov w21, #0
+code_loop:
+	bl uart_read
+	str w0, [w20, w21]
+	add w21, w21, #1
+	cmp w21, w19
+	blo code_loop
 
 	// send SUCCESS
+	mov w0, SUCCESS
+	bl uart_write
 
 	// branch to code
 	mov w0, #0x80000
