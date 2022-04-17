@@ -4,6 +4,10 @@ aarch64-none-elf
 # Dev tools
 */.clangd
 
+# Output files
+**/out/*
+**/bin/*
+
 # Prerequisites
 *.d
 
