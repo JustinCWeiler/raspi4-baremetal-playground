@@ -1,5 +1,5 @@
-#ifndef _BLINKY_H
-#define _BLINKY_H
+#ifndef _BLINKY_H_
+#define _BLINKY_H_
 
 #include <stdint.h>
 
