@@ -2,6 +2,7 @@
 #define _LIBTTY_H_
 
 // returns "-1"-terminated list of ttyusb's
+// also prints the raw output of powershell command
 // XXX THIS FUNCTION ONLY WORKS ON WSL1 -- WILL NEED TO BE CHANGED ON OTHER SYSTEMS
 int* find_ttyusb_list(void);
 
