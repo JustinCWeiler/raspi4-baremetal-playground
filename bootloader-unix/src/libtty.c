@@ -21,7 +21,7 @@ const char* search = "(COM";
 
 // sets up powershell command to be run with execvp
 // pipes must be set up before calling this function
-void execute_powershell(void) {
+static void execute_powershell(void) {
 	// string substitution
 	char sub_arg[1024];
 	snprintf(sub_arg, 1024, arg, SERIAL_VID, SERIAL_PID, ESPPRG_VID, ESPPRG_PID);
@@ -34,7 +34,7 @@ void execute_powershell(void) {
 }
 
 // returns fd of pipe that corresponds to output of powershell command
-int get_output(void) {
+static int get_output(void) {
 	int fds[2];
 	if (pipe(fds) < 0)
 		die("pipe failed: %s\n", strerror(errno));
@@ -57,8 +57,6 @@ int get_output(void) {
 	return fds[0];
 }
 
-// returns "-1"-terminated list of ttyusb's
-// XXX THIS FUNCTION ONLY WORKS ON WSL1 -- WILL NEED TO BE CHANGED ON OTHER SYSTEMS
 int* find_ttyusb_list(void) {
 	int fd = get_output();
 
@@ -86,8 +84,6 @@ int* find_ttyusb_list(void) {
 	return ret;
 }
 
-// returns string corresponding to /dev/ttyS device
-// if there are multiple, errors
 char *find_ttyusb(void) {
 	int* list = find_ttyusb_list();
 
@@ -115,7 +111,6 @@ static void set_timespec(struct timespec* dst, struct timespec* src) {
 	dst->tv_nsec = src->tv_nsec;
 }
 
-// returns the last modified (usually last inserted) /dev/ttyS device
 char *find_ttyusb_last(void) {
 	int* list = find_ttyusb_list();
 	if (list[0] == -1)
@@ -145,7 +140,6 @@ char *find_ttyusb_last(void) {
 	return strdup(buf);
 }
 
-// returns the first modified (usually first inserted) /dev/ttyS device
 char *find_ttyusb_first(void) {
 	int* list = find_ttyusb_list();
 	if (list[0] == -1)
