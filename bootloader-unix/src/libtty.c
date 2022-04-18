@@ -1,4 +1,5 @@
-#include <stdlib.h>
+#include "libtty.h"
+
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
