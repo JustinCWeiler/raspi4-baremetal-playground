@@ -6,6 +6,7 @@
 
 #include "libserial.h"
 #include "liberr.h"
+#include "bootdefs.h"
 
 uint8_t test_prog[] = {
 	0x01, 0xc4, 0xbf, 0x52, 0x00, 0x80, 0x80, 0x52, 0x01, 0x04, 0x80, 0x72,
@@ -15,15 +16,29 @@ uint8_t test_prog[] = {
 	0xf4, 0xff, 0xff, 0x17
 };
 
+uint8_t read_byte(int fd) {
+	uint8_t data;
+	int ret;
+	if ((ret = read(fd, &data, 1)) == 1)
+		return data;
+
+	if (ret < 0)
+		die("Error reading serial: %s\n", strerror(errno));
+	else
+		die("Connection to serial closed\n");
+}
+
+void write_byte(int fd, uint8_t b) {
+	if (write(fd, &b, 1) < 1)
+		die("Error writing serial: %s\n", strerror(errno));
+}
+
 int main(void) {
 	int fd = get_ttyusb();
 
-	uint8_t data;
-	int ret;
-	while ((ret = read(fd, &data, 1)) == 1) {
-		printf("0x%02x\n", data);
-	}
+	// read GET_INFO
+	while (read_byte(fd) != GET_INFO) ;
 
-	if (ret < 0)
-		die("Error reading: %s\n", strerror(errno));
+	// write PUT_INFO
+	write_byte(fd, PUT_INFO);
 }
