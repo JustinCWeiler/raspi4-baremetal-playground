@@ -1,5 +1,11 @@
 #include <stdio.h>
+#include <string.h>
 #include <stdint.h>
+#include <unistd.h>
+#include <errno.h>
+
+#include "libserial.h"
+#include "liberr.h"
 
 uint8_t test_prog[] = {
 	0x01, 0xc4, 0xbf, 0x52, 0x00, 0x80, 0x80, 0x52, 0x01, 0x04, 0x80, 0x72,
@@ -10,5 +16,14 @@ uint8_t test_prog[] = {
 };
 
 int main(void) {
-	return 0;
+	int fd = get_ttyusb();
+
+	uint8_t data;
+	int ret;
+	while ((ret = read(fd, &data, 1)) == 1) {
+		printf("0x%02x\n", data);
+	}
+
+	if (ret < 0)
+		die("Error reading: %s\n", strerror(errno));
 }
