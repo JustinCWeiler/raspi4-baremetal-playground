@@ -7,6 +7,6 @@
 #define die(msg...) do {	\
 	fprintf(stderr, msg);	\
 	exit(1);		\
-} while(0);
+} while(0)
 
 #endif
