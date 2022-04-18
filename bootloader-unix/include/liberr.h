@@ -2,6 +2,7 @@
 #define _LIBERR_H_
 
 #include <stdlib.h>
+#include <stdio.h>
 
 #define die(msg...) do {	\
 	fprintf(stderr, msg);	\
