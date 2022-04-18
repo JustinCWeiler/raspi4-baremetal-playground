@@ -11,7 +11,7 @@ MK_FN(recv)
 	PUSH(x20, x21)
 
 	mov w1, #1000
-	mul w0, w0, w19
+	mul w0, w0, w1
 
 	mov w19, w0
 	// w19 = timeout

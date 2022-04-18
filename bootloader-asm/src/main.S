@@ -35,6 +35,8 @@ MK_FN(boot_main)
 	// two blink to signify start
 	BLINKY(2)
 
+	bl uart_init
+
 	// send_recv GET_INFO, PUT_INFO
 get_info.loop:
 	mov w0, GET_INFO
@@ -92,7 +94,7 @@ get_info.loop:
 	mov w21, #0
 code_loop:
 	bl uart_read
-	str w0, [w20, w21]
+	str w0, [x20, x21]
 	add w21, w21, #1
 	cmp w21, w19
 	blo code_loop
