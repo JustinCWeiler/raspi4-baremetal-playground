@@ -30,11 +30,11 @@ GET_INFO
                        crc32[23:16]
                        crc32[31:24]
               <-----
+GET_CODE
 crc32[7:0]
 crc32[15:8]
 crc32[23:16]
 crc32[31:24]
-GET_CODE
               ----->
                        PUT_CODE
                        send code bytes

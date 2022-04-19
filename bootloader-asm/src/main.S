@@ -71,6 +71,10 @@ get_info.loop:
 	ldr w0, =crc
 	str w20, [x0]
 
+	// send GET_CODE
+	mov w0, GET_CODE
+	bl uart_write
+
 	// send crc32
 	mov w0, #0
 	bfxil w0, w20, #0, #8
@@ -80,10 +84,6 @@ get_info.loop:
 	bfxil w0, w20, #16, #8
 	bl uart_write
 	bfxil w0, w20, #24, #8
-	bl uart_write
-
-	// send GET_CODE
-	mov w0, GET_CODE
 	bl uart_write
 
 	// receive PUT_CODE
