@@ -92,13 +92,25 @@ get_info.loop:
 	// receive code bytes
 	mov w20, CODE_LOC
 	mov w21, #0
+	movn w22, #0
 code_loop:
 	bl uart_read
 	strb w0, [x20, x21]
+	crc32b w22, w22, w0
 	add w21, w21, #1
 	cmp w21, w19
 	blo code_loop
 
+	mvn w22, w22
+	ldr w20, crc
+	cmp w22, w20
+	beq succ
+
+	mov w0, CRC_FAIL
+	bl uart_write
+	b fast_blinky
+
+succ:
 	// send SUCCESS
 	mov w0, SUCCESS
 	bl uart_write
