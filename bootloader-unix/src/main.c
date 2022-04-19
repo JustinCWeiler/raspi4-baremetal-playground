@@ -7,17 +7,8 @@
 #include "libserial.h"
 #include "liberr.h"
 #include "libcrc.h"
+#include "libfile.h"
 #include "bootdefs.h"
-
-static const uint8_t test_prog[] = {
-	0x01, 0xc4, 0xbf, 0x52, 0x00, 0x80, 0x80, 0x52, 0x01, 0x04, 0x80, 0x72,
-	0x20, 0x00, 0x00, 0xb9, 0x02, 0x02, 0xa0, 0x52, 0x42, 0x04, 0x00, 0x71,
-	0xe1, 0xff, 0xff, 0x54, 0x81, 0x05, 0x80, 0x72, 0x20, 0x00, 0x00, 0xb9,
-	0x02, 0x02, 0xa0, 0x52, 0x42, 0x04, 0x00, 0x71, 0xe1, 0xff, 0xff, 0x54,
-	0xf4, 0xff, 0xff, 0x17
-};
-
-static const uint32_t nbytes = sizeof(test_prog);
 
 uint8_t read_byte(int fd) {
 	uint8_t data;
@@ -37,67 +28,54 @@ void write_byte(int fd, uint8_t b) {
 }
 
 int main(void) {
-	int fd = get_ttyusb();
+	uint8_t* prog;
 
-	uint32_t crc = crc32(test_prog, nbytes);
+	uint32_t nbytes = read_file("kernel.img", &prog);
+	uint32_t crc = crc32(prog, nbytes);
 
-	printf("----------1----------\n");
+	int tty_fd = get_ttyusb();
 
 	// read GET_INFO
-	while (read_byte(fd) != GET_INFO) ;
-
-	printf("----------2----------\n");
+	while (read_byte(tty_fd) != GET_INFO) ;
 
 	// write PUT_INFO
-	write_byte(fd, PUT_INFO);
+	write_byte(tty_fd, PUT_INFO);
 
 	// write nbytes
 	for (int i = 0; i < 32; i += 8)
-		write_byte(fd, nbytes >> i);
+		write_byte(tty_fd, nbytes >> i);
 
 	// write crc
 	for (int i = 0; i < 32; i += 8)
-		write_byte(fd, crc >> i);
-
-	printf("----------3----------\n");
+		write_byte(tty_fd, crc >> i);
 
 	// drain buffer
 	uint8_t recv;
-	while ( (recv = read_byte(fd)) == GET_INFO) ;
-
-	printf("----------4----------\n");
+	while ( (recv = read_byte(tty_fd)) == GET_INFO) ;
 
 	// read GET_CODE
 	if (recv != GET_CODE)
 		panic("Expected GET_CODE, got 0x%02x\n", recv);
 
-	printf("----------5----------\n");
-
 	// read crc
 	for (int i = 0; i < 32; i += 8) {
-		recv = read_byte(fd);
+		recv = read_byte(tty_fd);
 		if (recv != ((crc >> i) & 0xff))
 			panic("Expected crc byte 0x%02x and got 0x%02x\n", (crc >> i) & 0xff, recv);
 	}
 
-	printf("----------6----------\n");
-
 	// write PUT_CODE
-	write_byte(fd, PUT_CODE);
+	write_byte(tty_fd, PUT_CODE);
 
 	// write program bytes
 	for (int i = 0; i < nbytes; i++) {
-		write_byte(fd, test_prog[i]);
+		write_byte(tty_fd, prog[i]);
 	}
 
-	printf("----------7----------\n");
-
 	// read SUCCESS
-	recv = read_byte(fd);
+	recv = read_byte(tty_fd);
 	if (recv != SUCCESS)
 		panic("Expected SUCCESS, got 0x%02x\n", recv);
-
-	printf("----------8----------\n");
 
 	printf("Successfully booted!\n");
 }
