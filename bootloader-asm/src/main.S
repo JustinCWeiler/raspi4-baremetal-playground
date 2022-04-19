@@ -94,7 +94,7 @@ get_info.loop:
 	mov w21, #0
 code_loop:
 	bl uart_read
-	str w0, [x20, x21]
+	strb w0, [x20, x21]
 	add w21, w21, #1
 	cmp w21, w19
 	blo code_loop
@@ -104,7 +104,7 @@ code_loop:
 	bl uart_write
 
 	// branch to code
-	mov w0, #0x80000
+	mov w0, CODE_LOC
 	br x0
 	// NORETURN
 
