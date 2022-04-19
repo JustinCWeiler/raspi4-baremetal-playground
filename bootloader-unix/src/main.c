@@ -27,13 +27,29 @@ void write_byte(int fd, uint8_t b) {
 		panic("Error writing serial: %s\n", strerror(errno));
 }
 
-int main(void) {
+int main(int argc, const char** argv) {
+	int tty_fd;
 	uint8_t* prog;
+	uint32_t nbytes;
+	if (argc < 2)
+		die("Usage: %s [-last|-first|/dev/ttySX] <program.bin>\n", argv[0]);
+	else if (argc < 3) {
+		nbytes = read_file(argv[1], &prog);
+		tty_fd = get_ttyusb();
+	}
+	else if (argc < 4) {
+		nbytes = read_file(argv[2], &prog);
+		if (strcmp("-last", argv[1]) == 0)
+			tty_fd = get_ttyusb_last();
+		else if (strcmp("-first", argv[1]) == 0)
+			tty_fd = get_ttyusb_first();
+		else
+			tty_fd = get_usb(argv[1]);
+	}
+	else
+		die("Error: too many arguments");
 
-	uint32_t nbytes = read_file("kernel.img", &prog);
 	uint32_t crc = crc32(prog, nbytes);
-
-	int tty_fd = get_ttyusb();
 
 	// read GET_INFO
 	while (read_byte(tty_fd) != GET_INFO) ;
