@@ -12,17 +12,17 @@ int get_usb(char* devname) {
 	int fd = open(devname, O_RDWR);
 
 	if (fd < 0)
-		die("Error opening file: %s\n", strerror(errno));
+		panic("Error opening file: %s\n", strerror(errno));
 
 	struct termios tty;
 
 	if (tcgetattr(fd, &tty) < 0)
-		die("Error getting termios attrs: %s\n", strerror(errno));
+		panic("Error getting termios attrs: %s\n", strerror(errno));
 
 	cfmakeraw(&tty);
 
 	if (tcsetattr(fd, TCSANOW, &tty) < 0)
-		die("Error setting termios attrs: %s\n", strerror(errno));
+		panic("Error setting termios attrs: %s\n", strerror(errno));
 
 	return fd;
 }

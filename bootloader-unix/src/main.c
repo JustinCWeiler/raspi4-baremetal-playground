@@ -26,14 +26,14 @@ uint8_t read_byte(int fd) {
 		return data;
 
 	if (ret < 0)
-		die("Error reading serial: %s\n", strerror(errno));
+		panic("Error reading serial: %s\n", strerror(errno));
 	else
-		die("Connection to serial closed\n");
+		panic("Connection to serial closed\n");
 }
 
 void write_byte(int fd, uint8_t b) {
 	if (write(fd, &b, 1) < 1)
-		die("Error writing serial: %s\n", strerror(errno));
+		panic("Error writing serial: %s\n", strerror(errno));
 }
 
 int main(void) {
@@ -69,7 +69,7 @@ int main(void) {
 
 	// read GET_CODE
 	if (recv != GET_CODE)
-		die("Expected GET_CODE, got 0x%02x\n", recv);
+		panic("Expected GET_CODE, got 0x%02x\n", recv);
 
 	printf("----------5----------\n");
 
@@ -77,7 +77,7 @@ int main(void) {
 	for (int i = 0; i < 32; i += 8) {
 		recv = read_byte(fd);
 		if (recv != ((crc >> i) & 0xff))
-			die("Expected crc byte 0x%02x and got 0x%02x\n", (crc >> i) & 0xff, recv);
+			panic("Expected crc byte 0x%02x and got 0x%02x\n", (crc >> i) & 0xff, recv);
 	}
 
 	printf("----------6----------\n");
@@ -95,7 +95,7 @@ int main(void) {
 	// read SUCCESS
 	recv = read_byte(fd);
 	if (recv != SUCCESS)
-		die("Expected SUCCESS, got 0x%02x\n", recv);
+		panic("Expected SUCCESS, got 0x%02x\n", recv);
 
 	printf("----------8----------\n");
 

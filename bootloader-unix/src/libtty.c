@@ -38,11 +38,11 @@ static void execute_powershell(void) {
 static int get_output(void) {
 	int fds[2];
 	if (pipe(fds) < 0)
-		die("pipe failed: %s\n", strerror(errno));
+		panic("pipe failed: %s\n", strerror(errno));
 
 	int pid = fork();
 	if (pid < 0)
-		die("fork failed: %s\n", strerror(errno));
+		panic("fork failed: %s\n", strerror(errno));
 	if (pid == 0) {
 		dup2(fds[1], 1);
 		close(fds[0]);
@@ -89,9 +89,9 @@ char *find_ttyusb(void) {
 	int* list = find_ttyusb_list();
 
 	if (list[0] == -1)
-		die("found zero devices\n");
+		panic("found zero devices\n");
 	if (list[1] != -1)
-		die("found more than 1 device\n");
+		panic("found more than 1 device\n");
 
 	char buf[1024];
 	snprintf(buf, sizeof(buf), "/dev/ttyS%d", list[0]);
@@ -115,7 +115,7 @@ static void set_timespec(struct timespec* dst, struct timespec* src) {
 char *find_ttyusb_last(void) {
 	int* list = find_ttyusb_list();
 	if (list[0] == -1)
-		die("found zero devices\n");
+		panic("found zero devices\n");
 
 	char buf[1024];
 	struct stat s;
@@ -144,7 +144,7 @@ char *find_ttyusb_last(void) {
 char *find_ttyusb_first(void) {
 	int* list = find_ttyusb_list();
 	if (list[0] == -1)
-		die("found zero devices\n");
+		panic("found zero devices\n");
 
 	char buf[1024];
 	struct stat s;

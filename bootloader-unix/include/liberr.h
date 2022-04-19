@@ -9,4 +9,9 @@
 	exit(1);		\
 } while(0)
 
+#define panic(msg...) do {						\
+	fprintf(stderr, "%s:%d:PANIC:", __FILE__, __LINE__);		\
+	die(msg);							\
+} while (0)
+
 #endif
