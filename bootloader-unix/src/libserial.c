@@ -8,7 +8,7 @@
 #include "libtty.h"
 #include "liberr.h"
 
-int get_usb(char* devname) {
+int get_usb(const char* devname) {
 	int fd = open(devname, O_RDWR);
 
 	if (fd < 0)
