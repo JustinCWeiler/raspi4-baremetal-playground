@@ -15,8 +15,8 @@ OBJS := $(patsubst $(SRC)/%.S, $(BIN)/%.o, $(OBJS))
 SPEED=-Og
 
 CC = $(CCBIN)/$(PREFIX)-gcc
-CFLAGS = -ffreestanding -mcpu=cortex-a72 $(SPEED) -Wall -Werror -I$(INC) -MD
-ASFLAGS = -mcpu=cortex-a72 -Wall -Werror -I$(INC)
+CFLAGS = -ffreestanding -mcpu=cortex-a72 $(SPEED) -Wall -Wextra -Werror -I$(INC) -MD
+ASFLAGS = -mcpu=cortex-a72 -Wall -Wextra -Werror -I$(INC)
 LD = $(CCBIN)/$(PREFIX)-ld
 LDFLAGS =
 OCP = $(CCBIN)/$(PREFIX)-objcopy
