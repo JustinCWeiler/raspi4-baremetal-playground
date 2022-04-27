@@ -100,9 +100,17 @@ int main(int argc, const char** argv) {
 			crc_bad |= read_byte(tty_fd) << 24;
 			panic("CRC Mismatch: expected 0x%08x got 0x%08x\n", crc, crc_bad);
 			break;
+		case TIMEOUT:
+			panic("Pi timed out at some point\n");
 		default:
 			panic("Expected SUCCESS, got 0x%02x\n", recv);
 	}
 
 	printf("Successfully booted!\n");
+	printf("Echoing output from Pi\n\n");
+
+	while (1) {
+		printf("%c", read_byte(tty_fd));
+		fflush(stdout);
+	}
 }
