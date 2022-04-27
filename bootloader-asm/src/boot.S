@@ -13,6 +13,11 @@ _start:
 	// figure out end of memory
 	bl get_end_mem
 	// w0 contains end memory addr + 1
+	sub w0, w0, #4
+	mov w3, w0
+	// w0 contains end memory addr
+	// w3 contains end memory addr
+
 	ldr w1, =_boot_end_
 	// w1 contains end prog addr + 1
 	ldr w2, =_boot_start_
@@ -23,6 +28,8 @@ _start:
 	bfi w0, wzr, #0, #4
 	// w0 contains start memory addr
 	// rounded down to nearest 16 byte boundary
+
+	str w0, [x3]
 
 	// do the copy
 copy.loop:
