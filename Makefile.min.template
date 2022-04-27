@@ -12,7 +12,9 @@ OBJS := $(wildcard $(SRC)/*.[cS])
 OBJS := $(patsubst $(SRC)/%.c, $(BIN)/%.o, $(OBJS))
 OBJS := $(patsubst $(SRC)/%.S, $(BIN)/%.o, $(OBJS))
 
+ifndef SPEED
 SPEED = -Og
+endif
 
 CC = $(CCBIN)/$(PREFIX)-gcc
 CFLAGS = -ffreestanding -mcpu=cortex-a72 $(SPEED) -Wall -Wextra -Werror -I$(INC) -MD
