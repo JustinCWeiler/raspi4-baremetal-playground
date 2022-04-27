@@ -1,1 +1,1 @@
-include ../Makefile.template
+include ../Makefile.min.template
