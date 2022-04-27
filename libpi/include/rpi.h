@@ -17,8 +17,13 @@
 	*addr_ = val_;							\
 } while(0)
 
-#define MB_RDWR (asm volatile ( "dsb sy" :::));
-#define MB_RD (asm volatile ( "dsb ld" :::));
-#define MB_WR (asm volatile ( "dsb st" :::));
+#define MB_RDWR asm volatile ("dsb sy")
+#define MB_RD asm volatile ("dsb ld")
+#define MB_WR asm volatile ("dsb st")
+
+typedef void (*boot_func_t)(void) __attribute__((noreturn));
+
+boot_func_t get_bootloader_loc(void);
+void return_to_bootloader(void) __attribute__((noreturn));
 
 #endif

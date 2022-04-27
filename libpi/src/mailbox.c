@@ -13,8 +13,12 @@ void mailbox_write(mailbox_msg_t* msg, uint8_t channel) {
 		return;
 	msg_ |= channel;
 
+	// LAST READ
 	while (GET32(MAIL_STATUS) & MAIL_FULL) ;
 
+	MB_RDWR;
+
+	// FIRST WRITE
 	PUT32(MAIL_WR, msg_);
 }
 
@@ -25,11 +29,16 @@ mailbox_msg_t* mailbox_read(uint8_t channel) {
 	uintptr_t msg_;
 	uint8_t channel_;
 	do {
+		// READ
 		while (GET32(MAIL_STATUS) & MAIL_EMPTY) ;
 
+		// LAST READ
 		msg_ = GET32(MAIL_RD);
+
 		channel_ = msg_ & 0xf;
 	} while (channel_ != channel);
+
+	MB_RD;
 
 	msg_ &= ~0xf;
 	return (mailbox_msg_t*)msg_;
