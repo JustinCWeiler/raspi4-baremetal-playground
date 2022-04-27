@@ -90,8 +90,19 @@ int main(int argc, const char** argv) {
 
 	// read SUCCESS
 	recv = read_byte(tty_fd);
-	if (recv != SUCCESS)
-		panic("Expected SUCCESS, got 0x%02x\n", recv);
+	uint32_t crc_bad;
+	switch(recv) {
+		case SUCCESS: break;
+		case CRC_FAIL:
+			crc_bad = read_byte(tty_fd);
+			crc_bad |= read_byte(tty_fd) << 8;
+			crc_bad |= read_byte(tty_fd) << 16;
+			crc_bad |= read_byte(tty_fd) << 24;
+			panic("CRC Mismatch: expected 0x%08x got 0x%08x\n", crc, crc_bad);
+			break;
+		default:
+			panic("Expected SUCCESS, got 0x%02x\n", recv);
+	}
 
 	printf("Successfully booted!\n");
 }

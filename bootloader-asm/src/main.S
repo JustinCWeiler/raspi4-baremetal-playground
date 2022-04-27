@@ -103,12 +103,23 @@ code_loop:
 	blo code_loop
 
 	mvn w22, w22
-	ldr w20, crc
+	ldr w0, =crc
+	ldr w20, [x0]
 	cmp w22, w20
 	beq succ
 
 	mov w0, CRC_FAIL
 	bl uart_write
+
+	bfxil w0, w22, #0, #8
+	bl uart_write
+	bfxil w0, w22, #8, #8
+	bl uart_write
+	bfxil w0, w22, #16, #8
+	bl uart_write
+	bfxil w0, w22, #24, #8
+	bl uart_write
+
 	b fast_blinky
 
 succ:
