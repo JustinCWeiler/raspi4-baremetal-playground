@@ -1,5 +1,4 @@
 BIN = bin
-OUT = out
 SRC = src
 INC = include
 
@@ -22,9 +21,9 @@ LDFLAGS =
 OCP = $(CCBIN)/$(PREFIX)-objcopy
 AR = $(CCBIN)/$(PREFIX)-ar
 
-all: $(OUT)/libpi.a
+all: libpi.a
 clean:
-	rm -rf $(BIN) $(OUT)
+	rm -rf $(BIN) libpi.a
 
 $(BIN):
 	mkdir $(BIN)
@@ -36,8 +35,8 @@ $(BIN)/%.o: $(SRC)/%.c | $(BIN)
 $(BIN)/%.o: $(SRC)/%.S | $(BIN)
 	$(CC) $(ASFLAGS) -c $< -o $@
 
-$(OUT)/libpi.a: $(OBJS) | $(OUT)
-	$(AR) rcsf $(OUT)/libpi.a $(OBJS)
+libpi.a: $(OBJS)
+	$(AR) rcsf libpi.a $(OBJS)
 
 -include $(OBJS:.o=.d)
 
