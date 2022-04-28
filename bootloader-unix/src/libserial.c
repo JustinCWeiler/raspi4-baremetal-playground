@@ -20,6 +20,7 @@ int get_usb(const char* devname) {
 		panic("Error getting termios attrs: %s\n", strerror(errno));
 
 	cfmakeraw(&tty);
+	cfsetspeed(&tty, B115200);
 
 	if (tcsetattr(fd, TCSANOW, &tty) < 0)
 		panic("Error setting termios attrs: %s\n", strerror(errno));
