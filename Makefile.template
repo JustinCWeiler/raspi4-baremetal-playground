@@ -36,6 +36,7 @@ OCP = $(CCBIN)/$(PREFIX)-objcopy
 
 all: $(OUT)/$(TARGET)
 clean:
+	make -C $(LIBPATH) clean
 	rm -rf $(BIN) $(OUT)
 
 $(BIN):
@@ -48,9 +49,11 @@ $(BIN)/%.o: $(SRC)/%.c | $(BIN)
 $(BIN)/%.o: $(SRC)/%.S | $(BIN)
 	$(CC) $(ASFLAGS) -c $< -o $@
 
-$(OUT)/$(TARGETBASE).elf: $(LDSCRIPT) $(OBJS) | $(OUT)
-	make -C $(LIBPATH)
-	$(LD) $(LDFLAGS) -T $^ $(LIBPATH)/$(LIB).a -o $@
+$(LIBPATH)/$(LIB).a: FORCE
+	make -C $(LIBPATH) -j$(shell nproc)
+
+$(OUT)/$(TARGETBASE).elf: $(LDSCRIPT) $(OBJS) $(LIBPATH)/$(LIB).a | $(OUT)
+	$(LD) $(LDFLAGS) -T $^ -o $@
 $(OUT)/$(TARGET): $(OUT)/$(TARGETBASE).elf | $(OUT)
 	$(OCP) -Obinary $< $@
 
@@ -58,3 +61,4 @@ $(OUT)/$(TARGET): $(OUT)/$(TARGETBASE).elf | $(OUT)
 
 .PHONY: clean all
 .SILENT: $(BIN) $(OUT)
+FORCE:
