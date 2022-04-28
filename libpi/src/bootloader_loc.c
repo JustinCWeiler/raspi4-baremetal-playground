@@ -1,4 +1,5 @@
 #include "rpi.h"
+
 #include "mailbox.h"
 
 static mailbox_msg_t msg __attribute__((aligned(4)))= {
