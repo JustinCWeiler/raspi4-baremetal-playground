@@ -13,24 +13,28 @@ OBJS := $(patsubst $(SRC)/%.c, $(BIN)/%.o, $(OBJS))
 OBJS := $(patsubst $(SRC)/%.S, $(BIN)/%.o, $(OBJS))
 
 LIB = libpi
-LIBPATH = 
+LIBINC = include
+LIBPATH = ../$(LIB)
 
 ifndef SPEED
 SPEED = -Og
 endif
 
 ifndef TARGET
-	$(error TARGET not defined)
+$(warning TARGET not set, defaulting to kernel.img)
+TARGET = kernel.img
 endif
 
+TARGETBASE = $(basename $(TARGET))
+
 CC = $(CCBIN)/$(PREFIX)-gcc
-CFLAGS = -ffreestanding -mcpu=cortex-a72 $(SPEED) -Wall -Wextra -Werror -I$(INC) -MD
-ASFLAGS = -mcpu=cortex-a72 -Wall -Wextra -Werror -I$(INC)
+CFLAGS = -ffreestanding -mcpu=cortex-a72 $(SPEED) -Wall -Wextra -Werror -I$(INC) -I$(LIBPATH)/$(LIBINC) -MD
+ASFLAGS = -mcpu=cortex-a72 -Wall -Wextra -Werror -I$(INC) -I$(LIBPATH)/$(LIBINC)
 LD = $(CCBIN)/$(PREFIX)-ld
 LDFLAGS =
 OCP = $(CCBIN)/$(PREFIX)-objcopy
 
-all: $(OUT)/$(TARGET).bin
+all: $(OUT)/$(TARGET)
 clean:
 	rm -rf $(BIN) $(OUT)
 
@@ -44,10 +48,10 @@ $(BIN)/%.o: $(SRC)/%.c | $(BIN)
 $(BIN)/%.o: $(SRC)/%.S | $(BIN)
 	$(CC) $(ASFLAGS) -c $< -o $@
 
-$(OUT)/kernel.elf: $(LDSCRIPT) $(OBJS) | $(OUT)
-	$(LD) $(LDFLAGS) -T $^ -o $@
-
-$(OUT)/kernel.img: $(OUT)/kernel.elf | $(OUT)
+$(OUT)/$(TARGETBASE).elf: $(LDSCRIPT) $(OBJS) | $(OUT)
+	make -C $(LIBPATH)
+	$(LD) $(LDFLAGS) -T $^ $(LIBPATH)/$(LIB).a -o $@
+$(OUT)/$(TARGET): $(OUT)/$(TARGETBASE).elf | $(OUT)
 	$(OCP) -Obinary $< $@
 
 -include $(OBJS:.o=.d)
