@@ -50,7 +50,7 @@ $(BIN)/%.o: $(SRC)/%.S | $(BIN)
 	$(CC) $(ASFLAGS) -c $< -o $@
 
 $(LIBPATH)/$(LIB).a: FORCE
-	make -C $(LIBPATH) -j$(shell nproc)
+	$(MAKE) -C $(LIBPATH) -j$(shell nproc)
 
 $(OUT)/$(TARGETBASE).elf: $(LDSCRIPT) $(OBJS) $(LIBPATH)/$(LIB).a | $(OUT)
 	$(LD) $(LDFLAGS) -T $^ -o $@
