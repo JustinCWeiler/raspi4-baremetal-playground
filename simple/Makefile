@@ -1,1 +1,3 @@
-include ../Makefile.min.template
+TARGET = simple.bin
+
+include ../Makefile.template

@@ -76,7 +76,7 @@ gms.can_read_loop:
 	bfi w1, wzr, #0, #4
 	ldr w0, [x1, #5*4]
 	ldr w1, [x1, #6*4]
-	add w0, w1, w1
+	add w0, w0, w1
 
 	MB_RD
 

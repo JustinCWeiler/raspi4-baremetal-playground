@@ -127,6 +127,11 @@ succ:
 	mov w0, SUCCESS
 	bl uart_write
 
+succ.wait_done:
+	bl uart_tx_done
+	cmp w0, #1
+	bne succ.wait_done
+
 	// branch to code
 	mov w0, CODE_LOC
 	br x0

@@ -52,7 +52,10 @@ int main(int argc, const char** argv) {
 	uint32_t crc = crc32(prog, nbytes);
 
 	// read GET_INFO
-	while (read_byte(tty_fd) != GET_INFO) ;
+	uint8_t recv;
+	while ( (recv = read_byte(tty_fd)) != GET_INFO) {
+		printf("Expected GET_INFO, received 0x%x\n", recv);
+	}
 
 	// write PUT_INFO
 	write_byte(tty_fd, PUT_INFO);
@@ -66,7 +69,6 @@ int main(int argc, const char** argv) {
 		write_byte(tty_fd, crc >> i);
 
 	// drain buffer
-	uint8_t recv;
 	while ( (recv = read_byte(tty_fd)) == GET_INFO) ;
 
 	// read GET_CODE
@@ -110,7 +112,7 @@ int main(int argc, const char** argv) {
 	printf("Echoing output from Pi\n\n");
 
 	while (1) {
-		printf("%c", read_byte(tty_fd));
+		printf("0x%x ", read_byte(tty_fd));
 		fflush(stdout);
 	}
 }

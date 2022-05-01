@@ -12,7 +12,7 @@ void gpio_set_func(uint32_t pin, uint32_t func) {
 
 	// LAST READ
 	uint32_t val = GET32(fsel);
-	val &= (0b111 << offset);
+	val &= ~(0b111 << offset);
 	val |= func;
 	MB_RDWR;
 	// FIRST WRITE
@@ -66,9 +66,13 @@ unsigned gpio_read(uint32_t pin) {
 }
 
 void gpio_act_on(void) {
-	gpio_set_on(43);
+	// FIRST WRITE
+	MB_WR;
+	PUT32(GPIO_SET1, 1<<10);
 }
 
 void gpio_act_off(void) {
-	gpio_set_off(42);
+	// FIRST WRITE
+	MB_WR;
+	PUT32(GPIO_CLR1, 1<<10);
 }

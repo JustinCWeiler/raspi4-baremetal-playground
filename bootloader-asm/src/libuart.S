@@ -134,3 +134,12 @@ MK_FN(uart_can_read)
 
 	MB_RD
 	ret
+
+MK_FN(uart_tx_done)
+	ldr w1, AUX_MU_STAT
+	ldr w0, [x1]
+	lsr w0, w0, #9
+	and w0, w0, #1
+
+	MB_RD
+	ret

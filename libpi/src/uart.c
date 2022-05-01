@@ -9,7 +9,7 @@
 #define TX_PIN 14
 #define MU_FUNC GPIO_FUNC5
 
-void uart_init_baud(uint32_t baud) {
+void uart_init_baud(uint16_t baud) {
 	// set gpio pins
 	gpio_set_func(RX_PIN, MU_FUNC);
 	gpio_set_func(TX_PIN, MU_FUNC);

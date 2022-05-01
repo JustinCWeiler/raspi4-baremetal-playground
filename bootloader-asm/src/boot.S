@@ -11,7 +11,8 @@ _start:
 	mov sp, x0
 
 	// figure out end of memory
-	bl get_end_mem
+	//bl get_end_mem
+	mov w0, #0x8000000
 	// w0 contains end memory addr + 1
 	sub w0, w0, #4
 	mov w3, w0
