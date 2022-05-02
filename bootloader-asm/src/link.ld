@@ -26,9 +26,5 @@ SECTIONS {
 		*(.data*)
 	}
 
-	.bss : {
-		*(.bss)
-	}
-
 	_boot_end_ = .;
 }
