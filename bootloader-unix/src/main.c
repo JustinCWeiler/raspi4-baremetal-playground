@@ -112,7 +112,7 @@ int main(int argc, const char** argv) {
 	printf("Echoing output from Pi\n\n");
 
 	while (1) {
-		printf("0x%x ", read_byte(tty_fd));
+		printf("%c", read_byte(tty_fd));
 		fflush(stdout);
 	}
 }
