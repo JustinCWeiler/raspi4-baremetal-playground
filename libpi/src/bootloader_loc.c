@@ -1,7 +1,6 @@
 #include "rpi.h"
 
 #include "mailbox.h"
-#include "uart.h"
 
 static mailbox_msg_t msg __attribute__((aligned(16)))= {
 	8*4,
@@ -19,6 +18,9 @@ static mailbox_msg_t msg __attribute__((aligned(16)))= {
 static boot_func_t bootloader_loc = NULL;
 
 boot_func_t get_bootloader_loc(void) {
+	if (bootloader_loc)
+		return bootloader_loc;
+
 	mailbox_write_read(&msg, MAIL_CHANNEL);
 
 	uintptr_t base = msg.tags[3];
@@ -31,5 +33,8 @@ boot_func_t get_bootloader_loc(void) {
 }
 
 void return_to_bootloader(void) {
+	if (bootloader_loc)
+		bootloader_loc();
+
 	get_bootloader_loc()();
 }
