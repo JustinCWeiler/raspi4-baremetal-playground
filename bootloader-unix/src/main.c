@@ -111,8 +111,20 @@ int main(int argc, const char** argv) {
 	printf("Successfully booted!\n");
 	printf("Echoing output from Pi\n\n");
 
+	int eots_read = 0;
 	while (1) {
-		printf("%c", read_byte(tty_fd));
-		fflush(stdout);
+		uint8_t read = read_byte(tty_fd);
+		if (read == 0x04)
+			eots_read++;
+		else {
+			eots_read = 0;
+			putchar(read);
+			fflush(stdout);
+		}
+
+		if (eots_read >= 4) {
+			printf("\nPi sent end of program signal! Exiting now...\n");
+			exit(0);
+		}
 	}
 }

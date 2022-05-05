@@ -1,6 +1,7 @@
 #include "rpi.h"
 
 #include "mailbox.h"
+#include "uart.h"
 
 static mailbox_msg_t msg __attribute__((aligned(16)))= {
 	8*4,
@@ -33,6 +34,16 @@ boot_func_t get_bootloader_loc(void) {
 }
 
 void return_to_bootloader(void) {
+	uart_init();
+
+	// 4 EOT characters to signal end of program
+	// very very unlikely that program sends 4 EOTs in a row,
+	// even in an erroneous state
+	uart_write(0x04);
+	uart_write(0x04);
+	uart_write(0x04);
+	uart_write(0x04);
+
 	if (bootloader_loc)
 		bootloader_loc();
 
