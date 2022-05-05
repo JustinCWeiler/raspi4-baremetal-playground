@@ -33,8 +33,9 @@ ASFLAGS = -mcpu=cortex-a72 -Wall -Wextra -Werror -I$(INC) -I$(LIBPATH)/$(LIBINC)
 LD = $(CCBIN)/$(PREFIX)-ld
 LDFLAGS =
 OCP = $(CCBIN)/$(PREFIX)-objcopy
+ODMP = $(CCBIN)/$(PREFIX)-objdump
 
-all: $(OUT)/$(TARGET)
+all: $(OUT)/$(TARGET) $(OUT)/$(TARGETBASE).list
 clean:
 	make -C $(LIBPATH) clean
 	rm -rf $(BIN) $(OUT)
@@ -56,6 +57,8 @@ $(OUT)/$(TARGETBASE).elf: $(LDSCRIPT) $(OBJS) $(LIBPATH)/$(LIB).a | $(OUT)
 	$(LD) $(LDFLAGS) -T $^ -o $@
 $(OUT)/$(TARGET): $(OUT)/$(TARGETBASE).elf | $(OUT)
 	$(OCP) -Obinary $< $@
+$(OUT)/$(TARGETBASE).list: $(OUT)/$(TARGETBASE).elf | $(OUT)
+	$(ODMP) -D $< > $@
 
 -include $(OBJS:.o=.d)
 

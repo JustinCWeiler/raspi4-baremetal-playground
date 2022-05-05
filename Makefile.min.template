@@ -22,8 +22,9 @@ ASFLAGS = -mcpu=cortex-a72 -Wall -Wextra -Werror -I$(INC)
 LD = $(CCBIN)/$(PREFIX)-ld
 LDFLAGS =
 OCP = $(CCBIN)/$(PREFIX)-objcopy
+ODMP = $(CCBIN)/$(PREFIX)-objdump
 
-all: $(OUT)/kernel.img
+all: $(OUT)/kernel.img $(OUT)/kernel.list
 clean:
 	rm -rf $(BIN) $(OUT)
 
@@ -42,6 +43,9 @@ $(OUT)/kernel.elf: $(LDSCRIPT) $(OBJS) | $(OUT)
 
 $(OUT)/kernel.img: $(OUT)/kernel.elf | $(OUT)
 	$(OCP) -Obinary $< $@
+
+$(OUT)/kernel.list: $(OUT)/kernel.elf | $(OUT)
+	$(ODMP) -D $< > $@
 
 -include $(OBJS:.o=.d)
 
