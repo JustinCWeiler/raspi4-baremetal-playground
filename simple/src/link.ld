@@ -9,6 +9,10 @@ SECTIONS {
 	}
 
 	.bss : {
+		. = ALIGN(8);
+		__bss_start__ = .;
 		*(.bss)
+		. = ALIGN(8);
+		__bss_end__ = .;
 	}
 }
