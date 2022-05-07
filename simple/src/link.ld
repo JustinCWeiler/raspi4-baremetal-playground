@@ -5,7 +5,9 @@ SECTIONS {
 	}
 
 	.data : {
+		. = ALIGN(8);
 		*(.data)
+		. = ALIGN(8);
 	}
 
 	.bss : {
