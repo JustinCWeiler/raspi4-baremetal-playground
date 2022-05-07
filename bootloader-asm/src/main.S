@@ -14,6 +14,8 @@
 
 #define CODE_LOC #0x80000
 
+#define BLINKY_VAL #0xC0000
+
 .section ".bss"
 
 crc: .word
@@ -22,19 +24,36 @@ crc: .word
 
 #include "asm-defs.S"
 
-// debug defines
-#define BLINKYT(n, t) .rept(n); bl gpio_act_on; mov w0, t; bl timer_wait_ms; bl gpio_act_off; mov w0, t; bl timer_wait_ms; .endr
-#define BLINKY(n) BLINKYT(n, #100)
-
 MK_FN(boot_main)
+	// two blink to signify start
+	bl gpio_act_on
+	mov x0, BLINKY_VAL
+wait1:
+	sub x0, x0, #1
+	cbnz x0, wait1
+
+	bl gpio_act_off
+	mov x0, BLINKY_VAL
+wait2:
+	sub x0, x0, #1
+	cbnz x0, wait2
+
+
+	bl gpio_act_on
+	mov x0, BLINKY_VAL
+wait3:
+	sub x0, x0, #1
+	cbnz x0, wait3
+
+	bl gpio_act_off
+	mov x0, BLINKY_VAL
+wait4:
+	sub x0, x0, #1
+	cbnz x0, wait4
+
 	// setup stack
-	// we need to do this here too because this function may
-	// be called by user programs to fake reboot
 	mov x0, CODE_LOC
 	mov sp, x0
-
-	// two blink to signify start
-	BLINKY(2)
 
 	bl uart_init
 
@@ -137,11 +156,16 @@ succ.wait_done:
 	br x0
 	// NORETURN
 
-// debug functions
-slow_blinky:
-	BLINKYT(1, #1000)
-	b slow_blinky
-
 fast_blinky:
-	BLINKYT(1, #100)
+	bl gpio_act_on
+	mov x0, #0x80000
+fb_wait1:
+	sub x0, x0, #1
+	cbnz x0, fb_wait1
+	bl gpio_act_off
+	mov x0, #0x80000
+fb_wait2:
+	sub x0, x0, #1
+	cbnz x0, fb_wait2
+
 	b fast_blinky

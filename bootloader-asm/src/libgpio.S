@@ -8,12 +8,12 @@ GPIO_FSEL2: .word 0xFE200008
 GPIO_FSEL3: .word 0xFE20000C
 */
 
-GPIO_SET0:  .word 0xFE20001C
+//GPIO_SET0:  .word 0xFE20001C
 GPIO_SET1:  .word 0xFE200020
-GPIO_CLR0:  .word 0xFE200028
+//GPIO_CLR0:  .word 0xFE200028
 GPIO_CLR1:  .word 0xFE20002C
 
-GPIO_LEV0:  .word 0xFE200034
+//GPIO_LEV0:  .word 0xFE200034
 
 .section ".text.lib"
 
@@ -63,6 +63,7 @@ gsf.loop:
 	MB_RD
 	ret
 
+/*
 // void gpio_set_output(u32 pin)
 // set pin to output
 MK_FN(gpio_set_output)
@@ -120,6 +121,7 @@ MK_FN(gpio_read)
 
 	MB_RD
 	ret
+*/
 
 // void gpio_act_on(void)
 // turns on the act LED

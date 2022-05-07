@@ -114,6 +114,7 @@ ur.loop:
 	MB_RD
 	ret
 
+/*
 // bool uart_can_write(void)
 // returns whether or not we have space in tx FIFO
 MK_FN(uart_can_write)
@@ -124,6 +125,7 @@ MK_FN(uart_can_write)
 
 	MB_RD
 	ret
+*/
 
 // bool uart_can_read(void)
 // returns whether or not we have data in rx FIFO
