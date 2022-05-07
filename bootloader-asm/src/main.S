@@ -16,10 +16,6 @@
 
 #define BLINKY_VAL #0xC0000
 
-.section ".bss"
-
-crc: .word
-
 .section ".text.bootmain"
 
 #include "asm-defs.S"
@@ -52,6 +48,8 @@ wait4:
 	cbnz x0, wait4
 
 	// setup stack
+	// we need to do this here too because this function may
+	// be called by user programs to fake reboot
 	mov x0, CODE_LOC
 	mov sp, x0
 
@@ -77,19 +75,15 @@ get_info.loop:
 	bfi w19, w0, #24, #8
 
 	// receive crc32
-	mov w20, #0
+	mov w23, #0
 	bl uart_read
-	bfi w20, w0, #0, #8
+	bfi w23, w0, #0, #8
 	bl uart_read
-	bfi w20, w0, #8, #8
+	bfi w23, w0, #8, #8
 	bl uart_read
-	bfi w20, w0, #16, #8
+	bfi w23, w0, #16, #8
 	bl uart_read
-	bfi w20, w0, #24, #8
-
-	// (store crc32)
-	ldr w0, =crc
-	str w20, [x0]
+	bfi w23, w0, #24, #8
 
 	// send GET_CODE
 	mov w0, GET_CODE
@@ -97,13 +91,13 @@ get_info.loop:
 
 	// send crc32
 	mov w0, #0
-	bfxil w0, w20, #0, #8
+	bfxil w0, w23, #0, #8
 	bl uart_write
-	bfxil w0, w20, #8, #8
+	bfxil w0, w23, #8, #8
 	bl uart_write
-	bfxil w0, w20, #16, #8
+	bfxil w0, w23, #16, #8
 	bl uart_write
-	bfxil w0, w20, #24, #8
+	bfxil w0, w23, #24, #8
 	bl uart_write
 
 	// receive PUT_CODE
@@ -122,21 +116,19 @@ code_loop:
 	blo code_loop
 
 	mvn w22, w22
-	ldr w0, =crc
-	ldr w20, [x0]
-	cmp w22, w20
+	cmp w22, w23
 	beq succ
 
 	mov w0, CRC_FAIL
 	bl uart_write
 
-	bfxil w0, w22, #0, #8
+	bfxil w0, w23, #0, #8
 	bl uart_write
-	bfxil w0, w22, #8, #8
+	bfxil w0, w23, #8, #8
 	bl uart_write
-	bfxil w0, w22, #16, #8
+	bfxil w0, w23, #16, #8
 	bl uart_write
-	bfxil w0, w22, #24, #8
+	bfxil w0, w23, #24, #8
 	bl uart_write
 
 	b fast_blinky
@@ -158,12 +150,12 @@ succ.wait_done:
 
 fast_blinky:
 	bl gpio_act_on
-	mov x0, #0x80000
+	mov x0, BLINKY_VAL
 fb_wait1:
 	sub x0, x0, #1
 	cbnz x0, fb_wait1
 	bl gpio_act_off
-	mov x0, #0x80000
+	mov x0, BLINKY_VAL
 fb_wait2:
 	sub x0, x0, #1
 	cbnz x0, fb_wait2
