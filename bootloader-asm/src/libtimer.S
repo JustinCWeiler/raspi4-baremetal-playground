@@ -21,6 +21,7 @@ MK_FN(timer_get_us)
 
 // void timer_wait_us(u32 us)
 // wait for the specified number of microseconds
+/*
 MK_FN(timer_wait_us)
 	ldr w3, TIMER_CLO
 	ldr w1, [x3]
@@ -53,3 +54,4 @@ MK_FN(timer_wait)
 	bl timer_wait_us
 	POP(x30, xzr)
 	ret
+*/
