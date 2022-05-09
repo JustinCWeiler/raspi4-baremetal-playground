@@ -1,4 +1,4 @@
-.section ".data.lib"
+.section ".data"
 
 TIMER_CLO: .word 0xFE003004
 /*
@@ -6,7 +6,7 @@ unneeded
 TIMER_CHI: .word 0xFE003008
 */
 
-.section ".text.lib"
+.section ".text"
 
 #include "asm-defs.S"
 

@@ -1,4 +1,4 @@
-.section ".data.lib"
+.section ".data"
 
 AUX_ENABLES:    .word 0xFE215004
 AUX_MU_IO:      .word 0xFE215040
@@ -13,7 +13,7 @@ AUX_MU_CNTL:    .word 0xFE215060
 AUX_MU_STAT:    .word 0xFE215064
 AUX_MU_BAUD:    .word 0xFE215068
 
-.section ".text.lib"
+.section ".text"
 
 #include "asm-defs.S"
 

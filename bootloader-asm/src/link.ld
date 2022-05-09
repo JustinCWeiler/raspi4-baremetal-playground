@@ -3,26 +3,6 @@ SECTIONS {
 		*(.text.boot)
 		_boot_start_ = .;
 		*(.text.bootmain)
-		*(.text)
-	}
-
-	.data : {
-		. = ALIGN(8);
-		*(.data)
-	}
-
-	.text : {
-		. = ALIGN(16);
-		*(.text.lib)
-	}
-
-	.data : {
-		. = ALIGN(8);
-		*(.data.lib)
-	}
-
-	.text : {
-		. = ALIGN(16);
 		*(.text*)
 	}
 

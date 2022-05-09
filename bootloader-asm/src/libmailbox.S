@@ -1,4 +1,4 @@
-.section ".data.lib"
+.section ".data"
 
 MAIL_RD: .word 0xFE00B880
 MAIL_WR: .word 0xFE00B8A0
@@ -13,7 +13,7 @@ MAIL_STATUS: .word 0xFE00B880+0x18
 // channel we use
 #define MAIL_CHANNEL #8
 
-.section ".text.lib"
+.section ".text"
 
 #include "asm-defs.S"
 

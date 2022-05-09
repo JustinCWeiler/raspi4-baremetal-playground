@@ -1,4 +1,4 @@
-.section ".data.lib"
+.section ".data"
 
 GPIO_FSEL0: .word 0xFE200000
 /*
@@ -15,7 +15,7 @@ GPIO_CLR1:  .word 0xFE20002C
 
 //GPIO_LEV0:  .word 0xFE200034
 
-.section ".text.lib"
+.section ".text"
 
 #include "asm-defs.S"
 

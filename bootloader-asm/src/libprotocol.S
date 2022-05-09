@@ -1,6 +1,6 @@
-.section ".data.lib"
+.section ".data"
 
-.section ".text.lib"
+.section ".text"
 
 #include "asm-defs.S"
 
