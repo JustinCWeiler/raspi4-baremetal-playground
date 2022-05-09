@@ -35,7 +35,7 @@ uint32_t crc32(const uint8_t* data, size_t n) {
 
 	uint32_t crc = ~0;
 
-	for (int i = 0; i < n; i++) {
+	for (size_t i = 0; i < n; i++) {
 		crc = crc_increment(crc, data[i]);
 	}
 

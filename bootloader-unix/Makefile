@@ -8,7 +8,7 @@ OBJS := $(patsubst $(SRC)/%.c, $(BIN)/%.o, $(OBJS))
 OBJS := $(patsubst $(SRC)/%.S, $(BIN)/%.o, $(OBJS))
 
 CC = gcc
-CFLAGS = -Og -Wall -Werror -I$(INC) -MD
+CFLAGS = -Og -Wall -Wextra -Werror -I$(INC) -MD
 ASFLAGS =
 LD = gcc
 LDFLAGS =

@@ -17,7 +17,7 @@ uint32_t read_file(const char* filename, uint8_t** buf) {
 	struct stat s;
 	fstat(fd, &s);
 
-	size_t size = s.st_size;
+	ssize_t size = s.st_size;
 
 	*buf = malloc(size);
 

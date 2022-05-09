@@ -86,7 +86,7 @@ int main(int argc, const char** argv) {
 	write_byte(tty_fd, PUT_CODE);
 
 	// write program bytes
-	for (int i = 0; i < nbytes; i++) {
+	for (uint32_t i = 0; i < nbytes; i++) {
 		write_byte(tty_fd, prog[i]);
 	}
 
