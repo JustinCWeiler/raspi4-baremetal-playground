@@ -1,4 +1,4 @@
-.section ".text.boot"
+.section ".text"
 
 #include "asm-defs.S"
 

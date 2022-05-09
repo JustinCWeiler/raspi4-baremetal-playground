@@ -1,8 +1,8 @@
 SECTIONS {
 	.text 0x80000 : {
-		*(.text.boot)
+		bin/boot.o(.text)
 		_boot_start_ = .;
-		*(.text.bootmain)
+		bin/main.o(.text)
 		*(.text*)
 	}
 

@@ -16,7 +16,7 @@
 
 #define BLINKY_VAL #0xC0000
 
-.section ".text.bootmain"
+.section ".text"
 
 #include "asm-defs.S"
 
