@@ -23,3 +23,7 @@ we have around 512 KiB of stack memory. This shouldn't be much of an issue,
 but it is something to consider. The second is good because we get a lot more
 stack memory, but with the cost of it being hard to compute where the stack
 goes. We would also have to worry about stack alignment.
+
+The second issue is addressed in the fact that device initialization is
+*usually* idempotent, and when it's not there's usually an error. Any other
+case is unlikely, so I won't worry about it.
