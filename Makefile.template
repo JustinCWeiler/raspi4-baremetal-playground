@@ -21,7 +21,6 @@ SPEED = -Og
 endif
 
 ifndef TARGET
-$(warning TARGET not set, defaulting to kernel.img)
 TARGET = kernel.img
 endif
 

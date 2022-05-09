@@ -16,6 +16,12 @@ ifndef SPEED
 SPEED = -Og
 endif
 
+ifndef TARGET
+TARGET = kernel.img
+endif
+
+TARGETBASE = $(basename $(TARGET))
+
 CC = $(CCBIN)/$(PREFIX)-gcc
 CFLAGS = -ffreestanding -mcpu=cortex-a72 $(SPEED) -Wall -Wextra -Werror -I$(INC) -MD
 ASFLAGS = -mcpu=cortex-a72 -Wall -Wextra -Werror -I$(INC)
@@ -24,7 +30,7 @@ LDFLAGS =
 OCP = $(CCBIN)/$(PREFIX)-objcopy
 ODMP = $(CCBIN)/$(PREFIX)-objdump
 
-all: $(OUT)/kernel.img $(OUT)/kernel.list
+all: $(OUT)/$(TARGET) $(OUT)/$(TARGETBASE).list
 clean:
 	rm -rf $(BIN) $(OUT)
 
@@ -38,13 +44,13 @@ $(BIN)/%.o: $(SRC)/%.c | $(BIN)
 $(BIN)/%.o: $(SRC)/%.S | $(BIN)
 	$(CC) $(ASFLAGS) -c $< -o $@
 
-$(OUT)/kernel.elf: $(LDSCRIPT) $(OBJS) | $(OUT)
+$(OUT)/$(TARGETBASE).elf: $(LDSCRIPT) $(OBJS) | $(OUT)
 	$(LD) $(LDFLAGS) -T $^ -o $@
 
-$(OUT)/kernel.img: $(OUT)/kernel.elf | $(OUT)
+$(OUT)/$(TARGET): $(OUT)/$(TARGETBASE).elf | $(OUT)
 	$(OCP) -Obinary $< $@
 
-$(OUT)/kernel.list: $(OUT)/kernel.elf | $(OUT)
+$(OUT)/$(TARGETBASE).list: $(OUT)/$(TARGETBASE).elf | $(OUT)
 	$(ODMP) -D $< > $@
 
 -include $(OBJS:.o=.d)
