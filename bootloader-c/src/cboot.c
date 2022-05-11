@@ -67,9 +67,7 @@ static uintptr_t get_end_mem(void) {
 	return base + size;
 }
 
-_Static_assert(sizeof(unsigned long) == 8, "oh no");
-
-void _cstart(void) __attribute__((flatten, noreturn, nothrow));
+void _cstart(void) __attribute__((flatten, noreturn, nothrow, cold));
 void _cstart(void) {
 	uintptr_t end = get_end_mem();
 	// end - 4 = boot_loc
