@@ -18,17 +18,15 @@ static void gpio_act_off(void) {
 
 void main(void) __attribute__((flatten, noreturn, nothrow));
 void main(void) {
-	volatile size_t i;
-
-	while (1) {
+	for (int i = 0; i < 2; i++) {
 		gpio_act_on();
-		i = 0x100000;
-		while (i--) ;
+		volatile size_t w = 0xC0000;
+		while (w--) ;
 
 		gpio_act_off();
-		i = 0x100000;
-		while (i--) ;
+		w = 0xC0000;
+		while (w--) ;
 	}
 
-	__builtin_unreachable();
+	while (1) asm volatile ("wfe");
 }
