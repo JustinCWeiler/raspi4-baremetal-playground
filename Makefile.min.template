@@ -12,13 +12,9 @@ OBJS := $(wildcard $(SRC)/*.[cS])
 OBJS := $(patsubst $(SRC)/%.c, $(BIN)/%.o, $(OBJS))
 OBJS := $(patsubst $(SRC)/%.S, $(BIN)/%.o, $(OBJS))
 
-ifndef SPEED
-SPEED = -Og
-endif
+SPEED ?= -Og
 
-ifndef TARGET
-TARGET = kernel.img
-endif
+TARGET ?= kernel.img
 
 TARGETBASE = $(basename $(TARGET))
 

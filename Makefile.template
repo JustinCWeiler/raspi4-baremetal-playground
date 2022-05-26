@@ -16,13 +16,9 @@ LIB = libpi
 LIBINC = include
 LIBPATH = ../$(LIB)
 
-ifndef SPEED
-SPEED = -Og
-endif
+SPEED ?= -Og
 
-ifndef TARGET
-TARGET = kernel.img
-endif
+TARGET ?= kernel.img
 
 TARGETBASE = $(basename $(TARGET))
 
