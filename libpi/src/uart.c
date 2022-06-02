@@ -9,7 +9,12 @@
 #define TX_PIN 14
 #define MU_FUNC GPIO_FUNC5
 
+uart_data_t* uart_data = (uart_data_t*)AUX_MU_SCRATCH;
+
 void uart_init_baud(uint16_t baud) {
+	if(uart_data->init)
+		uart_flush();
+
 	// set gpio pins
 	gpio_set_func(RX_PIN, MU_FUNC);
 	gpio_set_func(TX_PIN, MU_FUNC);
@@ -42,6 +47,8 @@ void uart_init_baud(uint16_t baud) {
 
 	// reenable tx and rx
 	PUT32(AUX_MU_CNTL, 0b11);
+
+	uart_data->init = 1;
 }
 
 void uart_init(void) { uart_init_baud(B115200); }
@@ -76,3 +83,15 @@ unsigned uart_can_read(void) {
 	MB_RD;
 	return val;
 }
+
+void uart_flush(void) {
+	// LAST READ
+	while ((GET32(AUX_MU_STAT) >> 9) & 1) ;
+	MB_RD;
+}
+
+unsigned uart_is_initialized(void) {
+	return uart_data->init;
+}
+
+uart_data_t* get_uart_data(void) { return uart_data; }
