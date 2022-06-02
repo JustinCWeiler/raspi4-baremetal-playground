@@ -22,6 +22,4 @@ void main(void) {
 		count = AMOUNT;
 		while (count--) ;
 	}
-
-	return_to_bootloader();
 }
