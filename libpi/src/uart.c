@@ -86,7 +86,7 @@ unsigned uart_can_read(void) {
 
 void uart_flush(void) {
 	// LAST READ
-	while ((GET32(AUX_MU_STAT) >> 9) & 1) ;
+	while (!((GET32(AUX_MU_STAT) >> 9) & 1)) ;
 	MB_RD;
 }
 
