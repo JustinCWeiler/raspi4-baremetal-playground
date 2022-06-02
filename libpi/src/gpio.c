@@ -7,13 +7,13 @@ void gpio_set_func(uint32_t pin, uint32_t func) {
 	if (pin > 57)
 		return;
 
-	uintptr_t fsel = GPIO_FSEL0 + (pin / 10)*4;
-	unsigned offset = pin % 10;
+	uintptr_t fsel = GPIO_FSEL0 + (pin/10)*4;
+	unsigned offset = (pin % 10)*3;
 
 	// LAST READ
 	uint32_t val = GET32(fsel);
 	val &= ~(0b111 << offset);
-	val |= func;
+	val |= func << offset;
 	MB_RDWR;
 	// FIRST WRITE
 	PUT32(fsel, val);
@@ -33,7 +33,7 @@ void gpio_set_on(uint32_t pin) {
 
 	// FIRST WRITE
 	MB_WR;
-	if (pin > 31)
+	if (pin <= 31)
 		PUT32(GPIO_SET0, 1 << pin);
 	else
 		PUT32(GPIO_SET1, 1 << (pin - 32));

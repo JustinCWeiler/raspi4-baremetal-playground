@@ -117,6 +117,14 @@ int main(int argc, const char** argv) {
 		if (read == 0x04)
 			eots_read++;
 		else {
+			// could use for loop but compiler might not understand
+			// that eots_read < 4
+			if (eots_read > 0)
+				putchar(0x04);
+			if (eots_read > 1)
+				putchar(0x04);
+			if (eots_read > 2)
+				putchar(0x04);
 			eots_read = 0;
 			putchar(read);
 			fflush(stdout);
