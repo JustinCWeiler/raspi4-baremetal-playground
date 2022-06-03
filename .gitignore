@@ -10,6 +10,7 @@ test/*
 # Output files
 **/out/*
 **/bin/*
+*.list
 
 # Prerequisites
 *.d

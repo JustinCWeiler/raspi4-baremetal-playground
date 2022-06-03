@@ -19,9 +19,10 @@ ASFLAGS = -mcpu=cortex-a72 -Wall -Wextra -Werror -I$(INC)
 LD = $(CCBIN)/$(PREFIX)-ld
 LDFLAGS =
 OCP = $(CCBIN)/$(PREFIX)-objcopy
+ODMP = $(CCBIN)/$(PREFIX)-objdump
 AR = $(CCBIN)/$(PREFIX)-ar
 
-all: libpi.a
+all: libpi.a libpi.list
 clean:
 	rm -rf $(BIN) libpi.a
 
@@ -37,6 +38,9 @@ $(BIN)/%.o: $(SRC)/%.S | $(BIN)
 
 libpi.a: $(OBJS)
 	$(AR) rcsf libpi.a $(OBJS)
+
+libpi.list: libpi.a
+	$(ODMP) -D $< > $@
 
 -include $(OBJS:.o=.d)
 
