@@ -4,6 +4,9 @@ aarch64-none-elf
 # Dev tools
 */.clangd
 
+# test folder
+test/*
+
 # Output files
 **/out/*
 **/bin/*
