@@ -3,6 +3,19 @@
 
 #include "gpio.h"
 
+#define AUX_BASE	(PERIPHERAL_BASE+0x00215000)
+#define AUX_MU_BASE	(AUX_BASE+0x40)
+
+#define AUX_ENABLES	(AUX_BASE+0x04)
+#define AUX_MU_IO	(AUX_MU_BASE+0x00)
+#define AUX_MU_IER	(AUX_MU_BASE+0x04)
+#define AUX_MU_IIR	(AUX_MU_BASE+0x08)
+#define AUX_MU_LCR	(AUX_MU_BASE+0x0C)
+#define AUX_MU_SCRATCH	(AUX_MU_BASE+0x1C)
+#define AUX_MU_CNTL	(AUX_MU_BASE+0x20)
+#define AUX_MU_STAT	(AUX_MU_BASE+0x24)
+#define AUX_MU_BAUD	(AUX_MU_BASE+0x28)
+
 #define B115200 541
 
 #define RX_PIN 15

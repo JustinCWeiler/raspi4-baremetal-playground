@@ -2,6 +2,10 @@
 
 #include "timer.h"
 
+#define TIMER_BASE	(PERIPHERAL_BASE+0x3000)
+#define TIMER_LO	(TIMER_BASE+0x04)
+#define TIMER_HI	(TIMER_BASE+0x08)
+
 void delay_usec(uint64_t usec) {
 	uint64_t now = timer_get_usec_raw();
 	// LAST READ

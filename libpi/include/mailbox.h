@@ -3,16 +3,6 @@
 
 //#include "rpi.h"
 
-#define MAIL_BASE (PERIPHERAL_BASE+0xB880)
-
-#define MAIL_RD (MAIL_BASE)
-#define MAIL_WR (MAIL_BASE+0x20)
-#define MAIL_STATUS (MAIL_BASE+0x18)
-
-#define MAIL_FULL (1<<31)
-#define MAIL_EMPTY (1<<30)
-#define MAIL_RESPONSE (1<<31)
-
 // we only ever use channel 8
 #define MAIL_CHANNEL 8
 
