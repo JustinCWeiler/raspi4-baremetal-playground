@@ -8,7 +8,7 @@ LDSCRIPT=$(SRC)/link.ld
 PREFIX = aarch64-none-elf
 CCBIN = ../$(PREFIX)/bin
 
-OBJS := $(wildcard $(SRC)/*.[cS])
+OBJS ?= $(wildcard $(SRC)/*.[cS])
 OBJS := $(patsubst $(SRC)/%.c, $(BIN)/%.o, $(OBJS))
 OBJS := $(patsubst $(SRC)/%.S, $(BIN)/%.o, $(OBJS))
 
