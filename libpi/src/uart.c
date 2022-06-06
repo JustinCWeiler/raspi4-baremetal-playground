@@ -22,7 +22,7 @@
 #define TX_PIN 14
 #define MU_FUNC GPIO_FUNC5
 
-uart_data_t* uart_data = (uart_data_t*)AUX_MU_SCRATCH;
+static uart_data_t* uart_data = (uart_data_t*)AUX_MU_SCRATCH;
 
 void uart_init_baud(uint16_t baud) {
 	if(uart_data->init)
