@@ -22,7 +22,7 @@ static void wait(volatile size_t w) {
 	while (w--) ;
 }
 
-void main(void) __attribute__((flatten, noreturn, nothrow));
+__attribute__((flatten, noreturn, nothrow))
 void main(void) {
 	for (int i = 0; i < 2; i++) {
 		gpio_act_on();
