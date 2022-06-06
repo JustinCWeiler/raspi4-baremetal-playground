@@ -54,7 +54,7 @@ int main(int argc, const char** argv) {
 	// read GET_INFO
 	uint8_t recv;
 	while ( (recv = read_byte(tty_fd)) != GET_INFO) {
-		printf("Expected GET_INFO, received 0x%x\n", recv);
+		printf("Expected GET_INFO, received 0x%02x\n", recv);
 	}
 
 	// write PUT_INFO
