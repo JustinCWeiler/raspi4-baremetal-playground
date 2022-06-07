@@ -10,7 +10,7 @@
 #include "libfile.h"
 #include "bootdefs.h"
 
-uint8_t read_byte(int fd) {
+static uint8_t read_byte(int fd) {
 	uint8_t data;
 	int ret;
 	if ((ret = read(fd, &data, 1)) == 1)
@@ -22,15 +22,52 @@ uint8_t read_byte(int fd) {
 		panic("Connection to serial closed\n");
 }
 
-void write_byte(int fd, uint8_t b) {
+static void write_byte(int fd, uint8_t b) {
 	if (write(fd, &b, 1) < 1)
 		panic("Error writing serial: %s\n", strerror(errno));
+}
+
+static void print_code(uint8_t code) {
+	switch (code) {
+		case SUCCESS:
+			fprintf(stderr, "SUCCESS");
+			break;
+		case GET_INFO:
+			fprintf(stderr, "GET_INFO");
+			break;
+		case PUT_INFO:
+			fprintf(stderr, "PUT_INFO");
+			break;
+		case GET_CODE:
+			fprintf(stderr, "GET_CODE");
+			break;
+		case PUT_CODE:
+			fprintf(stderr, "PUT_CODE");
+			break;
+		default:
+			fprintf(stderr, "0x%02x", code);
+			break;
+	}
+}
+
+static void print_mismatch(int fd) {
+	uint8_t expect = read_byte(fd);
+	uint8_t actual = read_byte(fd);
+
+	fprintf(stderr, "RPi4 expected ");
+	print_code(expect);
+	fprintf(stderr, " but received ");
+	print_code(actual);
+	fprintf(stderr, "\n");
 }
 
 int main(int argc, const char** argv) {
 	int tty_fd;
 	uint8_t* prog;
 	uint32_t nbytes;
+
+	top:
+
 	if (argc < 2)
 		die("Usage: %s [-last|-first|/dev/ttySX] <program.bin>\n", argv[0]);
 	else if (argc < 3) {
@@ -54,7 +91,13 @@ int main(int argc, const char** argv) {
 	// read GET_INFO
 	uint8_t recv;
 	while ( (recv = read_byte(tty_fd)) != GET_INFO) {
-		printf("Expected GET_INFO, received 0x%02x\n", recv);
+		if (recv == CODE_MISMATCH)
+			print_mismatch(tty_fd);
+		fprintf(stderr, "Expected GET_INFO, received ");
+		print_code(recv);
+		fprintf(stderr, ". Restarting process...\n");
+
+		goto top;
 	}
 
 	// write PUT_INFO
@@ -72,8 +115,15 @@ int main(int argc, const char** argv) {
 	while ( (recv = read_byte(tty_fd)) == GET_INFO) ;
 
 	// read GET_CODE
-	if (recv != GET_CODE)
-		panic("Expected GET_CODE, got 0x%02x\n", recv);
+	if (recv != GET_CODE) {
+		if (recv == CODE_MISMATCH)
+			print_mismatch(tty_fd);
+		fprintf(stderr, "Expected GET_CODE, received ");
+		print_code(recv);
+		fprintf(stderr, ". Restarting process...\n");
+
+		goto top;
+	}
 
 	// read crc
 	for (int i = 0; i < 32; i += 8) {
@@ -102,8 +152,6 @@ int main(int argc, const char** argv) {
 			crc_bad |= read_byte(tty_fd) << 24;
 			panic("CRC Mismatch: expected 0x%08x got 0x%08x\n", crc, crc_bad);
 			break;
-		case TIMEOUT:
-			panic("Pi timed out at some point\n");
 		default:
 			panic("Expected SUCCESS, got 0x%02x\n", recv);
 	}
