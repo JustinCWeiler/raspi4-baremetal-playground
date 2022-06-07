@@ -39,6 +39,8 @@ static void wait(volatile size_t w) {
 
 __attribute__((flatten, noreturn, nothrow, cold))
 void main(void) {
+	top:
+
 	for (int i = 0; i < 2; i++) {
 		MB_WR;
 		// GPIO WRITE
@@ -77,7 +79,15 @@ void main(void) {
 	// receive PUT_INFO
 	// UART READ
 	recv = uart_read_raw();
-	// TODO check recv is PUT_INFO
+	if (recv != PUT_INFO) {
+		// UART READ
+		// UART WRITE
+		uart_write(CODE_MISMATCH);
+		uart_write(PUT_INFO);
+		uart_write(recv);
+		// TODO what to do here?
+		goto top;
+	}
 
 	// receive nbytes
 	uint32_t nbytes = 0;
@@ -109,7 +119,15 @@ void main(void) {
 	// receive PUT_CODE
 	// UART READ
 	recv = uart_read();
-	// TODO check recv is PUT_CODE
+	if (recv != PUT_CODE) {
+		// UART READ
+		// UART WRITE
+		uart_write(CODE_MISMATCH);
+		uart_write(PUT_CODE);
+		uart_write(recv);
+		// TODO what to do here?
+		goto top;
+	}
 
 	// receive code bytes
 	uint8_t* code = (void*)0x80000;
@@ -147,7 +165,5 @@ void main(void) {
 
 	asm volatile ("br %0" :: "r" (code));
 
-	while (1) asm volatile ("wfe");
-	// TODO
-	(void)recv;
+	__builtin_unreachable();
 }
