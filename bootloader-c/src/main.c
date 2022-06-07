@@ -28,6 +28,14 @@ static void wait(volatile size_t w) {
 	while (w--) ;
 }
 
+#define blink_error()\
+		while (1) {\
+			gpio_act_on();\
+			wait(BLINK_WAIT);\
+			gpio_act_off();\
+			wait(BLINK_WAIT);\
+		}
+
 __attribute__((flatten, noreturn, nothrow, cold))
 void main(void) {
 	for (int i = 0; i < 2; i++) {
@@ -100,12 +108,7 @@ void main(void) {
 			uart_write(cur_crc >> i);
 		}
 
-		while (1) {
-			gpio_act_on();
-			wait(BLINK_WAIT);
-			gpio_act_off();
-			wait(BLINK_WAIT);
-		}
+		blink_error();
 	}
 
 	// success!
