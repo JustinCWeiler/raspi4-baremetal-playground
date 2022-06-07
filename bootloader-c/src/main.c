@@ -29,6 +29,7 @@ static void wait(volatile size_t w) {
 }
 
 #define blink_error()\
+		MB_WR;\
 		while (1) {\
 			gpio_act_on();\
 			wait(BLINK_WAIT);\
@@ -39,11 +40,12 @@ static void wait(volatile size_t w) {
 __attribute__((flatten, noreturn, nothrow, cold))
 void main(void) {
 	for (int i = 0; i < 2; i++) {
-		// FIRST WRITE GPIO
 		MB_WR;
+		// GPIO WRITE
 		gpio_act_on();
 		wait(BLINK_WAIT);
 
+		// GPIO WRITE
 		gpio_act_off();
 		wait(BLINK_WAIT);
 	}
@@ -54,39 +56,52 @@ void main(void) {
 
 	// GET_INFO loop
 	while (1) {
+		// UART READ
+		// UART WRITE
 		uart_write(GET_INFO);
+		// TIMER READ
 		uint64_t now = timer_get_usec();
+		// TIMER READ
 		while (timer_get_usec() - now < TIMEOUT_WAIT)
+			// UART READ
 			if (uart_can_read())
 				goto out;
 	}
 	out:
 
 	// receive PUT_INFO
+	// UART READ
 	recv = uart_read_raw();
 	// TODO check recv is PUT_INFO
 
 	// receive nbytes
 	uint32_t nbytes = 0;
 	for (int i = 0; i < 32; i += 8) {
+		// UART READ
 		nbytes |= uart_read() << i;
 	}
 
 	// receive crc32
 	uint32_t crc32 = 0;
 	for (int i = 0; i < 32; i += 8) {
+		// UART READ
 		crc32 |= uart_read() << i;
 	}
 
 	// send GET_CODE
+	// UART READ
+	// UART WRITE
 	uart_write(GET_CODE);
 
 	// send crc32
 	for (int i = 0; i < 32; i += 8) {
+		// UART READ
+		// UART WRITE
 		uart_write(crc32 >> i);
 	}
 
 	// receive PUT_CODE
+	// UART READ
 	recv = uart_read();
 	// TODO check recv is PUT_CODE
 
@@ -94,6 +109,7 @@ void main(void) {
 	uint8_t* code = (void*)0x80000;
 	uint32_t cur_crc = ~0;
 	for (uint32_t i = 0; i < nbytes; i++) {
+		// UART READ
 		uint8_t val = uart_read();
 		code[i] = val;
 		asm volatile ("crc32b %w0, %w0, %w1" : "+r" (cur_crc) : "r" (val) );
@@ -102,9 +118,13 @@ void main(void) {
 
 	// check crc
 	if (crc32 != cur_crc) {
+		// UART READ
+		// UART WRITE
 		uart_write(CRC_FAIL);
 
 		for (int i = 0; i < 32; i += 8) {
+			// UART READ
+			// UART WRITE
 			uart_write(cur_crc >> i);
 		}
 
@@ -112,7 +132,10 @@ void main(void) {
 	}
 
 	// success!
+	// UART READ
+	// UART WRITE
 	uart_write(SUCCESS);
+	// UART READ
 	uart_flush();
 
 	asm volatile ("br %0" :: "r" (code));
