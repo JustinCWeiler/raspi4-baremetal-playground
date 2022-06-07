@@ -13,15 +13,15 @@
 #define BLINK_WAIT	0xC0000
 #define TIMEOUT_WAIT	300000
 
-#define SUCCESS		#0x00
-#define GET_INFO	#0x11
-#define PUT_INFO	#0x22
-#define GET_CODE	#0x33
-#define PUT_CODE	#0x44
+#define SUCCESS		0x00
+#define GET_INFO	0x11
+#define PUT_INFO	0x22
+#define GET_CODE	0x33
+#define PUT_CODE	0x44
 
-#define CRC_FAIL	#0xF0
-#define TIMEOUT		#0xF1
-#define MISC_FAIL	#0xFF
+#define CRC_FAIL	0xF0
+#define TIMEOUT		0xF1
+#define MISC_FAIL	0xFF
 
 static void wait(volatile size_t w) {
 	while (w--) ;
