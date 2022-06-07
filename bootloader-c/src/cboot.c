@@ -4,20 +4,20 @@
 extern unsigned char _boot_start_;
 extern unsigned char _boot_end_;
 
-#define PERIPHERAL_BASE 0xFE000000
-#define MAIL_BASE (PERIPHERAL_BASE+0xB880)
-#define MAIL_RD ((volatile uint32_t*)(MAIL_BASE))
-#define MAIL_WR ((volatile uint32_t*)(MAIL_BASE+0x20))
-#define MAIL_STATUS ((volatile uint32_t*)(MAIL_BASE+0x18))
+#define PERIPHERAL_BASE		0xFE000000
+#define MAIL_BASE		(PERIPHERAL_BASE+0xB880)
+#define MAIL_RD			((volatile uint32_t*)(MAIL_BASE))
+#define MAIL_WR			((volatile uint32_t*)(MAIL_BASE+0x20))
+#define MAIL_STATUS		((volatile uint32_t*)(MAIL_BASE+0x18))
 
-#define CHANNEL 8
+#define CHANNEL			8
 
-#define MAIL_FULL (1<<31)
-#define MAIL_EMPTY (1<<30)
+#define MAIL_FULL		(1<<31)
+#define MAIL_EMPTY		(1<<30)
 
-#define MB_RD asm volatile ("dsb ld");
-#define MB_WR asm volatile ("dsb st");
-#define MB_RDWR asm volatile ("dsb sy");
+#define MB_RD			asm volatile ("dsb ld");
+#define MB_WR			asm volatile ("dsb st");
+#define MB_RDWR			asm volatile ("dsb sy");
 
 static uint32_t msg[8] __attribute__((aligned(16))) = {
 	// msg size

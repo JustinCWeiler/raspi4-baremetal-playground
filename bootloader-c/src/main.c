@@ -1,16 +1,27 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#define PERIPHERAL_BASE 0xFE000000
+#define PERIPHERAL_BASE	0xFE000000
 
-#define MB_RDWR asm volatile ("dsb sy")
-#define MB_RD asm volatile ("dsb ld")
-#define MB_WR asm volatile ("dsb st")
+#define MB_RDWR		asm volatile ("dsb sy")
+#define MB_RD		asm volatile ("dsb ld")
+#define MB_WR		asm volatile ("dsb st")
 
 #include "gpio.c"
 #include "uart.c"
 
-#define BLINK_WAIT 0xC0000
+#define BLINK_WAIT	0xC0000
+#define TIMEOUT_WAIT	300000
+
+#define SUCCESS		#0x00
+#define GET_INFO	#0x11
+#define PUT_INFO	#0x22
+#define GET_CODE	#0x33
+#define PUT_CODE	#0x44
+
+#define CRC_FAIL	#0xF0
+#define TIMEOUT		#0xF1
+#define MISC_FAIL	#0xFF
 
 static void wait(volatile size_t w) {
 	while (w--) ;
@@ -29,15 +40,26 @@ void main(void) {
 	}
 
 	uart_init();
-	uart_write(0x01);
-	uart_write(0x23);
-	uart_write(0x45);
-	uart_write(0x67);
-	uart_write(0x89);
-	uart_write(0xab);
-	uart_write(0xcd);
-	uart_write(0xef);
-	uart_read();
+
+	// GET_INFO loop
+
+	// receive PUT_INFO
+
+	// receive nbytes
+
+	// receive crc32
+
+	// send GET_CODE
+
+	// send crc32
+
+	// receive PUT_CODE
+
+	// receive code bytes
+
+	// check crc
+
+	// success!
 
 	while (1) asm volatile ("wfe");
 }

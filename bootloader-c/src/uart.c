@@ -1,4 +1,4 @@
-#define GPIO_FSEL1 ((volatile uint32_t*)(GPIO_BASE+0x04))
+#define GPIO_FSEL1	((volatile uint32_t*)(GPIO_BASE+0x04))
 
 #define AUX_BASE	(PERIPHERAL_BASE+0x00215000)
 #define AUX_MU_BASE	(AUX_BASE+0x40)
@@ -13,10 +13,10 @@
 #define AUX_MU_STAT	((volatile uint32_t*)(AUX_MU_BASE+0x24))
 #define AUX_MU_BAUD	((volatile uint32_t*)(AUX_MU_BASE+0x28))
 
-#define B115200 541
-#define MU_FUNC 0b010
-#define RX_OFFSET (5*3)
-#define TX_OFFSET (4*3)
+#define B115200		541
+#define MU_FUNC		0b010
+#define RX_OFFSET	(5*3)
+#define TX_OFFSET	(4*3)
 
 // handles memory barriers
 static void uart_init(void) {
@@ -69,10 +69,26 @@ static void uart_write(uint8_t data) {
 }
 
 // READ
+static unsigned uart_can_read(void) {
+	return *AUX_MU_STAT & 1;
+}
+
+// READ
+static void uart_flush(void) {
+	while ( !((*AUX_MU_STAT >> 9) & 1) ) ;
+}
+
+// READ
 static uint8_t uart_read(void) {
 	// READ
 	while ( !(*AUX_MU_STAT & 1) ) ;
 
+	// READ
+	return *AUX_MU_IO;
+}
+
+// READ
+static uint8_t uart_read_raw(void) {
 	// READ
 	return *AUX_MU_IO;
 }
