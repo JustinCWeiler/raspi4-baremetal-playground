@@ -21,7 +21,7 @@
 #define PUT_CODE	0x44
 
 #define CRC_FAIL	0xF0
-#define TIMEOUT		0xF1
+#define CODE_MISMATCH	0xF1
 #define MISC_FAIL	0xFF
 
 static void wait(volatile size_t w) {
@@ -56,16 +56,21 @@ void main(void) {
 
 	// GET_INFO loop
 	while (1) {
-		// UART READ
-		// UART WRITE
+		// UART LAST READ
+		// UART FIRST WRITE
+		MB_WR;
 		uart_write(GET_INFO);
+		MB_RD;
 		// TIMER READ
 		uint64_t now = timer_get_usec();
-		// TIMER READ
-		while (timer_get_usec() - now < TIMEOUT_WAIT)
-			// UART READ
+		// TIMER LAST READ
+		while (timer_get_usec() - now < TIMEOUT_WAIT) {
+			MB_RD;
+			// UART LAST READ
 			if (uart_can_read())
 				goto out;
+			MB_RD;
+		}
 	}
 	out:
 
@@ -90,7 +95,8 @@ void main(void) {
 
 	// send GET_CODE
 	// UART READ
-	// UART WRITE
+	// UART FIRST WRITE
+	MB_WR;
 	uart_write(GET_CODE);
 
 	// send crc32
@@ -135,8 +141,9 @@ void main(void) {
 	// UART READ
 	// UART WRITE
 	uart_write(SUCCESS);
-	// UART READ
+	// UART LAST READ
 	uart_flush();
+	MB_RD;
 
 	asm volatile ("br %0" :: "r" (code));
 
