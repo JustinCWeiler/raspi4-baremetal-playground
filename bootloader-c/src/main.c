@@ -37,6 +37,25 @@ static void wait(volatile size_t w) {
 			wait(BLINK_WAIT);\
 		}
 
+static int get_info_timeout(void) {
+		// UART LAST READ
+		// UART FIRST WRITE
+		MB_WR;
+		uart_write(GET_INFO);
+		MB_RD;
+		// TIMER READ
+		uint64_t now = timer_get_usec();
+		// TIMER LAST READ
+		while (timer_get_usec() - now < TIMEOUT_WAIT) {
+			MB_RD;
+			// UART LAST READ
+			if (uart_can_read())
+				return 0;
+			MB_RD;
+		}
+		return 1;
+}
+
 __attribute__((flatten, noreturn, nothrow, cold))
 void main(void) {
 	top:
@@ -52,29 +71,16 @@ void main(void) {
 		wait(BLINK_WAIT);
 	}
 
+	gpio_act_on();
+
 	uart_init();
 
 	uint8_t recv;
 
 	// GET_INFO loop
-	while (1) {
-		// UART LAST READ
-		// UART FIRST WRITE
-		MB_WR;
-		uart_write(GET_INFO);
-		MB_RD;
-		// TIMER READ
-		uint64_t now = timer_get_usec();
-		// TIMER LAST READ
-		while (timer_get_usec() - now < TIMEOUT_WAIT) {
-			MB_RD;
-			// UART LAST READ
-			if (uart_can_read())
-				goto out;
-			MB_RD;
-		}
-	}
-	out:
+	while (get_info_timeout()) ;
+
+	gpio_act_off();
 
 	// receive PUT_INFO
 	// UART READ
