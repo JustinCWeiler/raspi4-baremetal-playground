@@ -14,7 +14,7 @@ bss_loop:
 	str xzr, [x0]
 	add x0, x0, #8
 	cmp x0, x1
-	bls bss_loop
+	blo bss_loop
 
 	bl main
 
