@@ -22,9 +22,9 @@ OCP = $(CCBIN)/$(PREFIX)-objcopy
 ODMP = $(CCBIN)/$(PREFIX)-objdump
 AR = $(CCBIN)/$(PREFIX)-ar
 
-all: libpi.a libpi.list
+all: libpi.a libpi.so libpi.list
 clean:
-	rm -rf $(BIN) libpi.a
+	rm -rf $(BIN) libpi.a libpi.list libpi.so
 
 $(BIN):
 	mkdir $(BIN)
@@ -38,6 +38,9 @@ $(BIN)/%.o: $(SRC)/%.S | $(BIN)
 
 libpi.a: $(OBJS)
 	$(AR) rcsf libpi.a $(OBJS)
+
+libpi.so: $(OBJS)
+	$(CC) -shared $(OBJS) -o libpi.so
 
 libpi.list: libpi.a
 	$(ODMP) -D $< > $@
