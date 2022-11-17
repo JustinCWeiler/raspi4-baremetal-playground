@@ -5,6 +5,8 @@
 
 #include "stdarg.h"
 
+typedef void (*write_fun_t)(uint8_t, void*);
+
 size_t puts(const char* src) {
 	size_t count = 0;
 
@@ -13,20 +15,94 @@ size_t puts(const char* src) {
 		count++;
 	}
 
+	uart_write('\n');
+	count++;
+
+	return count;
+}
+
+size_t dputs(write_fun_t write_fun, void* aux, const char* src) {
+	size_t count = 0;
+
+	while (*src) {
+		write_fun(*src++, aux);
+		count++;
+	}
+
+	write_fun('\n', aux);
+	count++;
+
 	return count;
 }
 
 // ---------- Complicated stuff :) ----------
 
-typedef void (*write_fun_t)(uint8_t, void*);
-
-static inline size_t handle_num(write_fun_t write_fun, void* aux, const char** fmt, uint64_t val) {
-	(*fmt)++;
+static inline size_t write_radix(write_fun_t write_fun, void* aux, uint64_t val, size_t min_digits, size_t radix, int sign, int capital) {
 	(void)write_fun;
 	(void)aux;
 	(void)val;
-
+	(void)min_digits;
+	(void)radix;
+	(void)sign;
+	(void)capital;
 	return 0;
+}
+
+static inline size_t handle_num(write_fun_t write_fun, void* aux, const char** fmt_ptr, va_list va) {
+	const char* fmt = *fmt_ptr;
+
+	size_t min_digits = 0;
+	if (*fmt == '0') {
+		char c = *++fmt;
+		while ('0' <= c && c <= '9') {
+			min_digits *= 10;
+			min_digits += c - '0';
+			c = *++fmt;
+		}
+	}
+
+	uint64_t val;
+	if (*fmt == 'l') {
+		val = va_arg(va, uint64_t);
+		fmt++;
+	}
+	else
+		val = va_arg(va, uint32_t);
+
+	size_t radix;
+	int sign, capital;
+	switch (*fmt) {
+		case 'd':
+			radix = 10;
+			sign = 0;
+			capital = 0;
+			break;
+		case 'u':
+			radix = 10;
+			sign = 1;
+			capital = 0;
+			break;
+		case 'o':
+			radix = 8;
+			sign = 0;
+			capital = 0;
+			break;
+		case 'x':
+			radix = 16;
+			sign = 0;
+			capital = 0;
+			break;
+		case 'X':
+			radix = 16;
+			sign = 0;
+			capital = 1;
+			break;
+		default:
+			return 0;
+	}
+
+	*fmt_ptr = fmt;
+	return write_radix(write_fun, aux, val, min_digits, radix, sign, capital);
 }
 
 static inline size_t handle_str(write_fun_t write_fun, void* aux, const char* src) {
@@ -53,12 +129,13 @@ static size_t vdprintf(write_fun_t write_fun, void* aux, const char* fmt, va_lis
 			fmt++;
 			switch (*fmt) {
 				case '0':
+				case 'l':
 				case 'd':
 				case 'u':
 				case 'o':
 				case 'x':
 				case 'X':
-					count += handle_num(write_fun, aux, &fmt, va_arg(va, uint64_t));
+					count += handle_num(write_fun, aux, &fmt, va);
 					fmt++;
 					break;
 				case 'c':
@@ -73,7 +150,9 @@ static size_t vdprintf(write_fun_t write_fun, void* aux, const char* fmt, va_lis
 					fmt++;
 					break;
 				case 'p':
-					va_arg(va, uintptr_t);
+					write_fun('0', aux);
+					write_fun('x', aux);
+					count += write_radix(write_fun, aux, va_arg(va, uintptr_t), 0, 16, 0, 0) + 2;
 					fmt++;
 					break;
 				case '%':
@@ -99,6 +178,8 @@ static size_t vdprintf(write_fun_t write_fun, void* aux, const char* fmt, va_lis
 
 // ---------- printf ----------
 
+// needed because uart_write is an external function so its location
+// is wonky
 static void printf_write(uint8_t c, void* aux) {
 	uart_write(c);
 	(void)aux;

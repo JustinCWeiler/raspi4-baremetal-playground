@@ -4,6 +4,7 @@
 //#include "rpi.h"
 
 size_t puts(const char* src);
+size_t dputs(void (*write_fun)(uint8_t, void*), void* aux, const char* src);
 
 size_t printf(const char* fmt, ...) __attribute__((format (printf, 1, 2)));
 size_t sprintf(char* buf, const char* fmt, ...) __attribute__((format (printf, 2, 3)));
