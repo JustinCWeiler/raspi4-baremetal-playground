@@ -37,18 +37,55 @@ size_t dputs(write_fun_t write_fun, void* aux, const char* src) {
 
 // ---------- Complicated stuff :) ----------
 
-static inline size_t write_radix(write_fun_t write_fun, void* aux, uint64_t val, size_t min_digits, size_t radix, int sign, int capital) {
-	(void)write_fun;
-	(void)aux;
-	(void)val;
-	(void)min_digits;
-	(void)radix;
-	(void)sign;
-	(void)capital;
-	return 0;
+static inline int mult_overflow(uint64_t a, uint64_t b) {
+	return a * b < a;
 }
 
-static inline size_t handle_num(write_fun_t write_fun, void* aux, const char** fmt_ptr, va_list va) {
+// assumes radix <= 36
+// which is assured by anyone who edits this file (so basically me)
+// :)
+static inline size_t write_radix(write_fun_t write_fun, void* aux, uint64_t val, size_t min_digits, size_t radix, int signd, int capital) {
+	size_t count = 0;
+	if (signd && val & (1lu << 63)) {
+		write_fun('-', aux);
+		count++;
+		val = ~val + 1;
+	}
+
+	uint64_t divisor = 1;
+	for (size_t i = 0; i < min_digits && !mult_overflow(divisor, radix); i++) {
+		divisor *= radix;
+	}
+
+	while (val / divisor != 0 && !mult_overflow(divisor, radix)) {
+		divisor *= radix;
+	}
+
+	if (!mult_overflow(divisor, radix))
+		divisor /= radix;
+
+	while (1) {
+		uint64_t digit = val / divisor;
+		char c;
+		if (digit < 0xa)
+			c = digit + '0';
+		else
+			c = digit - 0xa + (capital ? 'A' : 'a');
+
+		write_fun(c, aux);
+		count++;
+
+		if (divisor == 1)
+			break;
+
+		val %= divisor;
+		divisor /= radix;
+	}
+
+	return count;
+}
+
+static inline size_t handle_num(write_fun_t write_fun, void* aux, const char** fmt_ptr, va_list* va) {
 	const char* fmt = *fmt_ptr;
 
 	size_t min_digits = 0;
@@ -63,38 +100,46 @@ static inline size_t handle_num(write_fun_t write_fun, void* aux, const char** f
 
 	uint64_t val;
 	if (*fmt == 'l') {
-		val = va_arg(va, uint64_t);
 		fmt++;
+		if (*fmt == 'd')
+			val = va_arg(*va, int64_t);
+		else
+			val = va_arg(*va, uint64_t);
 	}
-	else
-		val = va_arg(va, uint32_t);
+	else {
+		if (*fmt == 'd')
+			// cast to sign extend
+			val = (int64_t)va_arg(*va, int32_t);
+		else
+			val = va_arg(*va, uint32_t);
+	}
 
 	size_t radix;
-	int sign, capital;
+	int signd, capital;
 	switch (*fmt) {
 		case 'd':
 			radix = 10;
-			sign = 0;
+			signd = 1;
 			capital = 0;
 			break;
 		case 'u':
 			radix = 10;
-			sign = 1;
+			signd = 0;
 			capital = 0;
 			break;
 		case 'o':
 			radix = 8;
-			sign = 0;
+			signd = 0;
 			capital = 0;
 			break;
 		case 'x':
 			radix = 16;
-			sign = 0;
+			signd = 0;
 			capital = 0;
 			break;
 		case 'X':
 			radix = 16;
-			sign = 0;
+			signd = 0;
 			capital = 1;
 			break;
 		default:
@@ -102,7 +147,7 @@ static inline size_t handle_num(write_fun_t write_fun, void* aux, const char** f
 	}
 
 	*fmt_ptr = fmt;
-	return write_radix(write_fun, aux, val, min_digits, radix, sign, capital);
+	return write_radix(write_fun, aux, val, min_digits, radix, signd, capital);
 }
 
 static inline size_t handle_str(write_fun_t write_fun, void* aux, const char* src) {
@@ -135,7 +180,7 @@ static size_t vdprintf(write_fun_t write_fun, void* aux, const char* fmt, va_lis
 				case 'o':
 				case 'x':
 				case 'X':
-					count += handle_num(write_fun, aux, &fmt, va);
+					count += handle_num(write_fun, aux, &fmt, &va);
 					fmt++;
 					break;
 				case 'c':
