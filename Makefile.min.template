@@ -27,8 +27,9 @@ OCP = $(CCBIN)/$(PREFIX)-objcopy
 ODMP = $(CCBIN)/$(PREFIX)-objdump
 
 all: $(OUT)/$(TARGET) $(OUT)/$(TARGETBASE).list
-clean:
+clean-simple:
 	rm -rf $(BIN) $(OUT)
+clean: clean-simple
 
 $(BIN):
 	mkdir $(BIN)

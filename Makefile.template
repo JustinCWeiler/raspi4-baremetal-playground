@@ -33,9 +33,11 @@ ODMP = $(CCBIN)/$(PREFIX)-objdump
 all: $(OUT)/$(TARGET) $(OUT)/$(TARGETBASE).list
 run: all
 	pi4-install $(OUT)/$(TARGET)
-clean:
-	make -C $(LIBPATH) clean
+clean-simple:
 	rm -rf $(BIN) $(OUT)
+clean-lib:
+	$(MAKE) -C $(LIBPATH) clean
+clean: clean-simple clean-lib
 
 $(BIN):
 	mkdir $(BIN)
@@ -48,7 +50,7 @@ $(BIN)/%.o: $(SRC)/%.S | $(BIN)
 	$(CC) $(ASFLAGS) -c $< -o $@
 
 $(LIBPATH)/$(LIB).a: FORCE
-	$(MAKE) -C $(LIBPATH) -j$(shell nproc)
+	$(MAKE) -C $(LIBPATH)
 
 $(OUT)/$(TARGETBASE).elf: $(LDSCRIPT) $(OBJS) $(LIBPATH)/$(LIB).a | $(OUT)
 	$(LD) $(LDFLAGS) -T $^ -o $@

@@ -23,8 +23,9 @@ ODMP = $(CCBIN)/$(PREFIX)-objdump
 AR = $(CCBIN)/$(PREFIX)-ar
 
 all: libpi.a libpi.so libpi.list
-clean:
+clean-simple:
 	rm -rf $(BIN) libpi.a libpi.list libpi.so
+clean: clean-simple
 
 $(BIN):
 	mkdir $(BIN)

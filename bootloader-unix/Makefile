@@ -14,8 +14,9 @@ LD = gcc
 LDFLAGS =
 
 all: $(OUT)/pi4-install
-clean:
+clean-simple:
 	rm -rf $(BIN) $(OUT)
+clean: clean-simple
 
 $(BIN):
 	mkdir $(BIN)
