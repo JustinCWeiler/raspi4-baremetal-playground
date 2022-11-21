@@ -5,31 +5,31 @@
 
 #include "stdarg.h"
 
-typedef void (*write_fun_t)(uint8_t, void*);
+typedef void ( *write_fun_t )( uint8_t, void* );
 
-size_t puts(const char* src) {
+size_t puts( const char* src ) {
 	size_t count = 0;
 
-	while (*src) {
-		uart_write(*src++);
+	while ( *src ) {
+		uart_write( *src++ );
 		count++;
 	}
 
-	uart_write('\n');
+	uart_write( '\n' );
 	count++;
 
 	return count;
 }
 
-size_t dputs(write_fun_t write_fun, void* aux, const char* src) {
+size_t dputs( write_fun_t write_fun, void* aux, const char* src ) {
 	size_t count = 0;
 
-	while (*src) {
-		write_fun(*src++, aux);
+	while ( *src ) {
+		write_fun( *src++, aux );
 		count++;
 	}
 
-	write_fun('\n', aux);
+	write_fun( '\n', aux );
 	count++;
 
 	return count;
@@ -37,46 +37,44 @@ size_t dputs(write_fun_t write_fun, void* aux, const char* src) {
 
 // ---------- Complicated stuff :) ----------
 
-static inline int mult_overflow(uint64_t a, uint64_t b) {
+static inline int mult_overflow( uint64_t a, uint64_t b ) {
 	return a * b < a;
 }
 
 // assumes radix <= 36
 // which is assured by anyone who edits this file (so basically me)
 // :)
-static inline size_t write_radix(write_fun_t write_fun, void* aux, uint64_t val, size_t min_digits, size_t radix, int signd, int capital) {
+static inline size_t
+write_radix( write_fun_t write_fun, void* aux, uint64_t val, size_t min_digits, size_t radix, int signd, int capital ) {
 	size_t count = 0;
-	if (signd && val & (1lu << 63)) {
-		write_fun('-', aux);
+	if ( signd && val & ( 1lu << 63 ) ) {
+		write_fun( '-', aux );
 		count++;
 		val = ~val + 1;
 	}
 
 	uint64_t divisor = 1;
-	for (size_t i = 0; i < min_digits && !mult_overflow(divisor, radix); i++) {
+	for ( size_t i = 0; i < min_digits && !mult_overflow( divisor, radix ); i++ ) {
 		divisor *= radix;
 	}
 
-	while (val / divisor != 0 && !mult_overflow(divisor, radix)) {
+	while ( val / divisor != 0 && !mult_overflow( divisor, radix ) ) {
 		divisor *= radix;
 	}
 
-	if (!mult_overflow(divisor, radix))
-		divisor /= radix;
+	if ( !mult_overflow( divisor, radix ) ) divisor /= radix;
 
-	while (1) {
+	while ( 1 ) {
 		uint64_t digit = val / divisor;
 		char c;
-		if (digit < 0xa)
-			c = digit + '0';
+		if ( digit < 0xa ) c = digit + '0';
 		else
-			c = digit - 0xa + (capital ? 'A' : 'a');
+			c = digit - 0xa + ( capital ? 'A' : 'a' );
 
-		write_fun(c, aux);
+		write_fun( c, aux );
 		count++;
 
-		if (divisor == 1)
-			break;
+		if ( divisor == 1 ) break;
 
 		val %= divisor;
 		divisor /= radix;
@@ -85,13 +83,13 @@ static inline size_t write_radix(write_fun_t write_fun, void* aux, uint64_t val,
 	return count;
 }
 
-static inline size_t handle_num(write_fun_t write_fun, void* aux, const char** fmt_ptr, va_list* va) {
+static inline size_t handle_num( write_fun_t write_fun, void* aux, const char** fmt_ptr, va_list* va ) {
 	const char* fmt = *fmt_ptr;
 
 	size_t min_digits = 0;
-	if (*fmt == '0') {
+	if ( *fmt == '0' ) {
 		char c = *++fmt;
-		while ('0' <= c && c <= '9') {
+		while ( '0' <= c && c <= '9' ) {
 			min_digits *= 10;
 			min_digits += c - '0';
 			c = *++fmt;
@@ -99,24 +97,23 @@ static inline size_t handle_num(write_fun_t write_fun, void* aux, const char** f
 	}
 
 	uint64_t val;
-	if (*fmt == 'l') {
+	if ( *fmt == 'l' ) {
 		fmt++;
-		if (*fmt == 'd')
-			val = va_arg(*va, int64_t);
+		if ( *fmt == 'd' ) val = va_arg( *va, int64_t );
 		else
-			val = va_arg(*va, uint64_t);
+			val = va_arg( *va, uint64_t );
 	}
 	else {
-		if (*fmt == 'd')
+		if ( *fmt == 'd' )
 			// cast to sign extend
-			val = (int64_t)va_arg(*va, int32_t);
+			val = (int64_t)va_arg( *va, int32_t );
 		else
-			val = va_arg(*va, uint32_t);
+			val = va_arg( *va, uint32_t );
 	}
 
 	size_t radix;
 	int signd, capital;
-	switch (*fmt) {
+	switch ( *fmt ) {
 		case 'd':
 			radix = 10;
 			signd = 1;
@@ -147,14 +144,14 @@ static inline size_t handle_num(write_fun_t write_fun, void* aux, const char** f
 	}
 
 	*fmt_ptr = fmt;
-	return write_radix(write_fun, aux, val, min_digits, radix, signd, capital);
+	return write_radix( write_fun, aux, val, min_digits, radix, signd, capital );
 }
 
-static inline size_t handle_str(write_fun_t write_fun, void* aux, const char* src) {
+static inline size_t handle_str( write_fun_t write_fun, void* aux, const char* src ) {
 	size_t count = 0;
 
-	while (*src) {
-		write_fun(*src++, aux);
+	while ( *src ) {
+		write_fun( *src++, aux );
 		count++;
 	}
 
@@ -166,13 +163,13 @@ static inline size_t handle_str(write_fun_t write_fun, void* aux, const char* sr
 // that proved clunky and also not portable (although portability isnt really a priority)
 // the new solution is also kinda clunky but now in an implementation way rather than
 // a "gotta deal with the compiler" way
-static size_t vdprintf(write_fun_t write_fun, void* aux, const char* fmt, va_list va) {
+static size_t vdprintf( write_fun_t write_fun, void* aux, const char* fmt, va_list va ) {
 	size_t count = 0;
 
-	while (*fmt) {
-		if (*fmt == '%') {
+	while ( *fmt ) {
+		if ( *fmt == '%' ) {
 			fmt++;
-			switch (*fmt) {
+			switch ( *fmt ) {
 				case '0':
 				case 'l':
 				case 'd':
@@ -180,40 +177,41 @@ static size_t vdprintf(write_fun_t write_fun, void* aux, const char* fmt, va_lis
 				case 'o':
 				case 'x':
 				case 'X':
-					count += handle_num(write_fun, aux, &fmt, &va);
+					count += handle_num( write_fun, aux, &fmt, &va );
 					fmt++;
 					break;
 				case 'c':
 					// we say int here but its casted down to a char
 					// have to say int because smth smth gcc no likey char for va_arg
-					write_fun(va_arg(va, int), aux);
+					write_fun( va_arg( va, int ), aux );
 					count++;
 					fmt++;
 					break;
 				case 's':
-					count += handle_str(write_fun, aux, va_arg(va, char*));
+					count += handle_str( write_fun, aux, va_arg( va, char* ) );
 					fmt++;
 					break;
 				case 'p':
-					write_fun('0', aux);
-					write_fun('x', aux);
-					count += write_radix(write_fun, aux, va_arg(va, uintptr_t), 0, 16, 0, 0) + 2;
+					write_fun( '0', aux );
+					write_fun( 'x', aux );
+					count +=
+					  write_radix( write_fun, aux, va_arg( va, uintptr_t ), 0, 16, 0, 0 ) + 2;
 					fmt++;
 					break;
 				case '%':
-					write_fun('%', aux);
+					write_fun( '%', aux );
 					count++;
 					fmt++;
 					break;
 				default:
-					write_fun('%', aux);
-					write_fun(*fmt, aux);
+					write_fun( '%', aux );
+					write_fun( *fmt, aux );
 					count += 2;
 					fmt++;
 			}
 		}
 		else {
-			write_fun(*fmt++, aux);
+			write_fun( *fmt++, aux );
 			count++;
 		}
 	}
@@ -225,18 +223,18 @@ static size_t vdprintf(write_fun_t write_fun, void* aux, const char* fmt, va_lis
 
 // needed because uart_write is an external function so its location
 // is wonky
-static void printf_write(uint8_t c, void* aux) {
-	uart_write(c);
+static void printf_write( uint8_t c, void* aux ) {
+	uart_write( c );
 	(void)aux;
 }
 
-size_t printf(const char* fmt, ...) {
+size_t printf( const char* fmt, ... ) {
 	va_list va;
-	va_start(va, fmt);
+	va_start( va, fmt );
 
-	size_t count = vdprintf(printf_write, NULL, fmt, va);
+	size_t count = vdprintf( printf_write, NULL, fmt, va );
 
-	va_end(va);
+	va_end( va );
 
 	return count;
 }
@@ -248,33 +246,33 @@ struct sprintf_data {
 	size_t pos;
 };
 
-static void sprintf_write(uint8_t c, void* aux) {
+static void sprintf_write( uint8_t c, void* aux ) {
 	struct sprintf_data* data = aux;
 
 	data->buf[data->pos++] = c;
 }
 
-size_t sprintf(char* buf, const char* fmt, ...) {
+size_t sprintf( char* buf, const char* fmt, ... ) {
 	va_list va;
-	va_start(va, fmt);
+	va_start( va, fmt );
 
-	struct sprintf_data data = {.buf=buf, .pos=0};
-	size_t count = vdprintf(sprintf_write, &data, fmt, va);
+	struct sprintf_data data = { .buf = buf, .pos = 0 };
+	size_t count = vdprintf( sprintf_write, &data, fmt, va );
 
-	va_end(va);
+	va_end( va );
 
 	return count;
 }
 
 // ---------- dprintf ----------
 
-size_t dprintf(void (*write_fun)(uint8_t), const char* fmt, ...) {
+size_t dprintf( void ( *write_fun )( uint8_t ), const char* fmt, ... ) {
 	va_list va;
-	va_start(va, fmt);
+	va_start( va, fmt );
 
-	size_t count = vdprintf((write_fun_t)(void*)write_fun, NULL, fmt, va);
+	size_t count = vdprintf( ( write_fun_t )(void*)write_fun, NULL, fmt, va );
 
-	va_end(va);
+	va_end( va );
 
 	return count;
 }
@@ -287,23 +285,22 @@ struct snprintf_data {
 	size_t pos;
 };
 
-static void snprintf_write(uint8_t c, void* aux) {
+static void snprintf_write( uint8_t c, void* aux ) {
 	struct snprintf_data* data = aux;
 
-	if (data->pos >= data->n - 1)
-		data->buf[data->n - 1] = 0;
+	if ( data->pos >= data->n - 1 ) data->buf[data->n - 1] = 0;
 	else
 		data->buf[data->pos++] = c;
 }
 
-size_t snprintf(char* buf, size_t size, const char* fmt, ...) {
+size_t snprintf( char* buf, size_t size, const char* fmt, ... ) {
 	va_list va;
-	va_start(va, fmt);
+	va_start( va, fmt );
 
-	struct snprintf_data data = {.buf=buf, .n=size, .pos=0};
-	size_t count = vdprintf(snprintf_write, &data, fmt, va);
+	struct snprintf_data data = { .buf = buf, .n = size, .pos = 0 };
+	size_t count = vdprintf( snprintf_write, &data, fmt, va );
 
-	va_end(va);
+	va_end( va );
 
 	return count;
 }
