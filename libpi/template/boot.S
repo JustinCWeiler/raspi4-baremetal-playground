@@ -21,6 +21,12 @@ bss_loop:
 	// uart
 	bl uart_init
 
+	// heap (default 1GB of space)
+	ldr w0, =__bss_end__
+	mov w1, w0
+	add w1, w1, 1 << 20
+	bl reset_heap
+
 	bl main
 
 	bl return_to_bootloader
