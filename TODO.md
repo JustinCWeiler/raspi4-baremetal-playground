@@ -7,5 +7,6 @@
         1. Figure out .so format
     2. Updating of libpi.so over serial
 3. Library functions
-    1. printf
-    2. random
+    1. ~~printf~~
+    2. malloc
+    3. random
