@@ -32,6 +32,7 @@ ODMP = $(CCBIN)/$(PREFIX)-objdump
 
 all: $(OUT)/$(TARGET) $(OUT)/$(TARGETBASE).list
 run: all
+	$(MAKE) -C ../bootloader-unix
 	pi4-install $(OUT)/$(TARGET)
 clean-simple:
 	rm -rf $(BIN) $(OUT)
