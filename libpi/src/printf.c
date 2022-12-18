@@ -1,9 +1,8 @@
 #include "rpi.h"
-
 #include "printf.h"
-#include "uart.h"
 
 #include "stdarg.h"
+#include "uart.h"
 
 typedef void ( *write_fun_t )( uint8_t, void* );
 

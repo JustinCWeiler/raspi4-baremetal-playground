@@ -1,5 +1,4 @@
 #include "rpi.h"
-
 #include "gpio.h"
 
 #define GPIO_BASE ( PERIPHERAL_BASE + 0x00200000 )

@@ -1,5 +1,4 @@
 #include "rpi.h"
-
 #include "crc32.h"
 
 uint32_t crc32( const void* void_buf, size_t n ) {

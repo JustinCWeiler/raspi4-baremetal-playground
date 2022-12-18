@@ -1,5 +1,4 @@
 #include "rpi.h"
-
 #include "mailbox.h"
 
 #define MAIL_BASE ( PERIPHERAL_BASE + 0xB880 )

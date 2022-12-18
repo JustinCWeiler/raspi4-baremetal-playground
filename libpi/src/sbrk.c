@@ -1,5 +1,4 @@
 #include "rpi.h"
-
 #include "sbrk.h"
 
 char* heap_start;

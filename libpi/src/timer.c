@@ -1,5 +1,4 @@
 #include "rpi.h"
-
 #include "timer.h"
 
 #define TIMER_BASE ( PERIPHERAL_BASE + 0x3000 )
