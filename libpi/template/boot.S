@@ -16,6 +16,11 @@ bss_loop:
 	cmp x0, x1
 	blo bss_loop
 
+	// init functions
+
+	// uart
+	bl uart_init
+
 	bl main
 
 	bl return_to_bootloader
