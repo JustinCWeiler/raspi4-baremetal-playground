@@ -57,11 +57,9 @@ write_radix( write_fun_t write_fun, void* aux, uint64_t val, size_t min_digits, 
 		divisor *= radix;
 	}
 
-	while ( val / divisor != 0 && !mult_overflow( divisor, radix ) ) {
+	while ( val / divisor >= radix && !mult_overflow( divisor, radix ) ) {
 		divisor *= radix;
 	}
-
-	if ( !mult_overflow( divisor, radix ) ) divisor /= radix;
 
 	while ( 1 ) {
 		uint64_t digit = val / divisor;
