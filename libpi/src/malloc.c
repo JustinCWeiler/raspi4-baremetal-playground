@@ -33,6 +33,8 @@ static inline int block_good( hdr_t* h, size_t size ) {
 }
 
 void* malloc( size_t bytes ) {
+	if ( bytes == 0 ) return NULL;
+
 	bytes = roundup( bytes, 8 );
 
 	if ( first_block == NULL ) {
