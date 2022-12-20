@@ -9,4 +9,4 @@
 3. Library functions
     1. ~~printf~~
     2. ~~malloc~~
-    3. random
+    3. ~~random~~
