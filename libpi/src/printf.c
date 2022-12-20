@@ -53,7 +53,7 @@ write_radix( write_fun_t write_fun, void* aux, uint64_t val, size_t min_digits, 
 	}
 
 	uint64_t divisor = 1;
-	for ( size_t i = 0; i < min_digits && !mult_overflow( divisor, radix ); i++ ) {
+	for ( size_t i = 1; i < min_digits && !mult_overflow( divisor, radix ); i++ ) {
 		divisor *= radix;
 	}
 
